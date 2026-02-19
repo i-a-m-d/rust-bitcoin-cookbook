@@ -10,3 +10,6 @@ cookbook/tests/Cargo.lock
 cookbook/tests/target
 cookbook/tests/src
 site/static/book
+
+# personal files
+notes.md
