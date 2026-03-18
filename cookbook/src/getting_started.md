@@ -34,3 +34,4 @@ Alternatively, you can edit `Cargo.toml` directly and add the `bitcoin` dependen
 bitcoin = "0.32.8"
 ```
 
+## Enable useful features when you need them
