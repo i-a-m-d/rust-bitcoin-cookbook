@@ -164,6 +164,17 @@ cargo init
 <pre><code class="language-bash">cargo new my-rust-bitcoin-project
 cd my-rust-bitcoin-project
 </code></pre>
+<p>At this point, you should have a project layout that looks like this:</p>
+<pre><code class="language-text">my-rust-bitcoin-project
+├── Cargo.toml
+└── src
+    └── main.rs
+</code></pre>
+<p>And the default <code>src/main.rs</code> produced by Cargo will look like this:</p>
+<pre><code class="language-rust">fn main() {
+    println!("Hello, world!");
+}</code></pre>
+<p>We'll replace that with our first <code>rust-bitcoin</code> program in the next steps.</p>
 <h2 id="add-the-crate"><a class="header" href="#add-the-crate">Add the crate</a></h2>
 <p>Now that you have your project set up, add the <code>bitcoin</code> crate with Cargo:</p>
 <pre><code class="language-bash">cargo add bitcoin
@@ -173,10 +184,44 @@ cd my-rust-bitcoin-project
 bitcoin = "0.32.8"
 </code></pre>
 <h2 id="enable-useful-features-when-you-need-them"><a class="header" href="#enable-useful-features-when-you-need-them">Enable useful features when you need them</a></h2>
-<p>For example, if you want random key generation during experiments:</p>
+<p><code>rust-bitcoin</code> has several package features, which let you opt into additional capabilities at compile time.</p>
+<p>The first additional features you are most likely to care about are:</p>
+<ul>
+<li><code>rand-std</code>: enables helpers like random private key generation</li>
+<li><code>serde</code>: enables serialization and deserialization support for Bitcoin types</li>
+</ul>
+<p>Enable the <code>rand-std</code> feature:</p>
 <pre><code class="language-bash">cargo add bitcoin --features rand-std
 </code></pre>
+<p>Enable both the <code>rand-std</code> and <code>serde</code> features:</p>
+<pre><code class="language-bash">cargo add bitcoin --features rand-std,serde
+</code></pre>
 <h2 id="write-a-first-tiny-program"><a class="header" href="#write-a-first-tiny-program">Write a first tiny program</a></h2>
+<p>A fun first program is one that generates a brand new testnet keypair and prints the corresponding WIF and address.</p>
+<p>Replace the default contents of <code>src/main.rs</code> with:</p>
+<pre><code class="language-rust">use bitcoin::key::Secp256k1;
+use bitcoin::{Address, Network, PrivateKey};
+
+fn main() {
+    let secp = Secp256k1::new();
+    let private_key = PrivateKey::generate(Network::Testnet);
+    let public_key = private_key.public_key(&amp;secp);
+    let address =
+        Address::p2wpkh(&amp;public_key.try_into().expect("compressed key"), Network::Testnet);
+
+    println!("private key (WIF): {}", private_key.to_wif());
+    println!("testnet address: {}", address);
+}</code></pre>
+<p>Then run it:</p>
+<pre><code class="language-bash">cargo run
+</code></pre>
+<p>This gives you a quick success case built around three important ideas:</p>
+<ul>
+<li><code>PrivateKey::generate(Network::Testnet)</code> creates a new testnet private key using secure randomness</li>
+<li><code>to_wif()</code> prints the key in Wallet Import Format (WIF), which is a common string representation for private keys</li>
+<li><code>Address::p2wpkh(...)</code> derives a native SegWit address from the public key</li>
+</ul>
+<p>For a local testnet experiment, it is fine to print the private key like this. In real applications, treat private keys as sensitive material and avoid logging them.</p>
 
                     </main>
 
