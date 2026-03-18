@@ -193,7 +193,7 @@ over the peer-to-peer network, plus fun stuff you can do with miniscript.</p>
 <p>This website is licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0 Universal (CC0 1.0) Public Domain Dedication</a>.</p>
 <p><a href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://licensebuttons.net/l/by-sa/4.0/88x31.png" alt="CC BY-SA 4.0" /></a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h1>
-<p>Before diving into individual <code>rust-bitcoin</code> types, it helps to get one tiny project compiling and running successfully. This chapter shows the smallest practical setup and points out the feature flags you are most likely to want early on.</p>
+<p>Before diving into individual <code>rust-bitcoin</code> types, it helps to get a small starter project compiling and running successfully. This chapter shows the smallest practical setup and points out the feature flags you are most likely to want early on.</p>
 <h2 id="create-a-project"><a class="header" href="#create-a-project">Create a project</a></h2>
 <p>If you are starting from nothing, first create a directory for your project, change into it, and initialize a new Cargo package:</p>
 <pre><code class="language-bash">mkdir my-rust-bitcoin-project
@@ -214,12 +214,12 @@ cd my-rust-bitcoin-project
 <pre><code class="language-rust">fn main() {
     println!("Hello, world!");
 }</code></pre>
-<p>We'll replace that with our first <code>rust-bitcoin</code> program in the next steps.</p>
+<p>We'll replace that with our first <code>rust-bitcoin</code> program later in this chapter.</p>
 <h2 id="add-the-crate"><a class="header" href="#add-the-crate">Add the crate</a></h2>
 <p>Now that you have your project set up, add the <code>bitcoin</code> crate with Cargo:</p>
 <pre><code class="language-bash">cargo add bitcoin
 </code></pre>
-<p>Alternatively, you can edit <code>Cargo.toml</code> directly and add the <code>bitcoin</code> dependency with the version constraint that matches this cookbook:</p>
+<p>Alternatively, you can edit <code>Cargo.toml</code> directly and add the <code>bitcoin</code> dependency set to the version that matches this cookbook:</p>
 <pre><code class="language-toml">[dependencies]
 bitcoin = "0.32.8"
 </code></pre>
