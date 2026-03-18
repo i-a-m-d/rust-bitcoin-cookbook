@@ -1,6 +1,6 @@
 # Getting Started
 
-Before diving into individual `rust-bitcoin` types, it helps to get one tiny project compiling and running successfully. This chapter shows the smallest practical setup and points out the feature flags you are most likely to want early on.
+Before diving into individual `rust-bitcoin` types, it helps to get a small starter project compiling and running successfully. This chapter shows the smallest practical setup and points out the feature flags you are most likely to want early on.
 
 ## Create a project
 
@@ -36,7 +36,7 @@ fn main() {
 }
 ```
 
-We'll replace that with our first `rust-bitcoin` program in the next steps.
+We'll replace that with our first `rust-bitcoin` program later in this chapter.
 
 ## Add the crate
 
@@ -46,7 +46,7 @@ Now that you have your project set up, add the `bitcoin` crate with Cargo:
 cargo add bitcoin
 ```
 
-Alternatively, you can edit `Cargo.toml` directly and add the `bitcoin` dependency with the version constraint that matches this cookbook:
+Alternatively, you can edit `Cargo.toml` directly and add the `bitcoin` dependency set to the version that matches this cookbook:
 
 ```toml
 [dependencies]
