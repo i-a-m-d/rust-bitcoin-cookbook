@@ -218,20 +218,6 @@ bitcoin = "0.32.8"
 </code></pre>
 <h2 id="write-a-first-tiny-program"><a class="header" href="#write-a-first-tiny-program">Write a first tiny program</a></h2>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="generating-keys"><a class="header" href="#generating-keys">Generating keys</a></h1>
-<h2 id="11-bitcoin-keys"><a class="header" href="#11-bitcoin-keys">1.1 Bitcoin keys</a></h2>
-<p>For this recipe, the <code>rand-std</code> feature is required.</p>
-<p>We'll make sure the <code>bitcoin</code> crate is built with <code>rand-std</code> enabled:</p>
-<pre><code class="language-bash">cargo add bitcoin --features rand-std
-</code></pre>
-<pre><code class="language-rust">use bitcoin::{PrivateKey, NetworkKind};
-use bitcoin::secp256k1::{Secp256k1};
-
-fn main() {
-    let secp = Secp256k1::new();
-    let network = NetworkKind::Test;
-    let ecdsa_sk = PrivateKey::generate(network);
-    let ecdsa_pk = ecdsa_sk.public_key(&amp;secp);
-}</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="constructing-and-signing-transactions"><a class="header" href="#constructing-and-signing-transactions">Constructing and Signing Transactions</a></h1>
 <p>We provide the following examples:</p>
 <ul>
