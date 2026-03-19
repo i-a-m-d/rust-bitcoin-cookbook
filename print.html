@@ -262,6 +262,16 @@ fn main() {
 <li><code>Address::p2wpkh(...)</code> derives a native SegWit address from the public key</li>
 </ul>
 <p>For a local testnet experiment, it is fine to print the private key like this. In real applications, treat private keys as sensitive material and avoid logging them.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="the-network-type"><a class="header" href="#the-network-type">The <code>Network</code> Type</a></h1>
+<p><code>bitcoin::Network</code> is an enum that allows you to select which Bitcoin network and blockchain your code is targeting. In practice, it is one of the first types you touch because it affects things like address encoding, parsing and chain-specific constants.</p>
+<p>In <code>bitcoin 0.32.8</code>, the variants are:</p>
+<ul>
+<li><code>Network::Bitcoin</code></li>
+<li><code>Network::Testnet</code></li>
+<li><code>Network::Testnet4</code></li>
+<li><code>Network::Signet</code></li>
+<li><code>Network::Regtest</code></li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="constructing-and-signing-transactions"><a class="header" href="#constructing-and-signing-transactions">Constructing and Signing Transactions</a></h1>
 <p>We provide the following examples:</p>
 <ul>
