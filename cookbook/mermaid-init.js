@@ -17,7 +17,32 @@
     }
 
     const theme = lastThemeWasLight ? 'default' : 'dark';
-    mermaid.initialize({ startOnLoad: true, theme });
+    mermaid.initialize({ startOnLoad: false, theme });
+
+    async function renderMermaid() {
+        const diagrams = document.querySelectorAll('pre.mermaid');
+
+        for (const diagram of diagrams) {
+            diagram.setAttribute('data-mermaid-state', 'pending');
+        }
+
+        try {
+            await mermaid.run({ nodes: diagrams });
+
+            for (const diagram of diagrams) {
+                diagram.setAttribute('data-mermaid-state', 'rendered');
+            }
+        } catch (error) {
+            for (const diagram of diagrams) {
+                diagram.setAttribute('data-mermaid-state', 'error');
+            }
+            throw error;
+        }
+    }
+
+    window.addEventListener('load', () => {
+        renderMermaid().catch(error => console.error('Mermaid failed to render', error));
+    }, { once: true });
 
     // Simplest way to make mermaid re-render the diagrams in the new theme is via refreshing the page
 
