@@ -29,7 +29,6 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="mermaid-9b4357ff.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -37,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-ff8a183d.js";
+            window.path_to_searchindex_js = "searchindex-bffec089.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-70c1a335.js"></script>
@@ -2065,33 +2064,37 @@ the <code>internal_key</code> public key hash that we generated earlier. <a href
 <h1 id="mermaid-demo"><a class="header" href="#mermaid-demo">Mermaid Demo</a></h1>
 <p>This page exists to demonstrate Mermaid support in the book build.</p>
 <h2 id="utxo-lifecycle-example"><a class="header" href="#utxo-lifecycle-example">UTXO Lifecycle Example</a></h2>
-<pre class="mermaid">flowchart LR
-    subgraph CB["Coinbase TX 7a1...e3f"]
-        direction TB
-        C["coinbase input"]
-    end
-
-    subgraph TX1["TX 3bc...91a"]
-        direction TB
-        U0((7a1...e3f:0&lt;br/&gt;50 BTC))
-    end
-
-    U1((3bc...91a:0&lt;br/&gt;30 BTC))
-    U2((3bc...91a:1&lt;br/&gt;19.999 BTC))
-
-    CB --&gt; U0
-    TX1 --&gt; U1
-    TX1 --&gt; U2
-
-    classDef utxo fill:#eef9ee,stroke:#2f7d32,stroke-width:2px,color:#1f3a22;
-    classDef spent fill:#ffffff,stroke:#777,stroke-width:2px,stroke-dasharray: 6 4,color:#555;
-    classDef tx fill:#e8f1ff,stroke:#3566a8,stroke-width:1.5px,color:#1d2f52;
-
-    class U0 spent;
-    class U1,U2 utxo;
-    class CB,TX1 tx;
-</pre>
-
+<p><svg id="mermaid-diagram-2252912776327195633" width="100%" xmlns="http://www.w3.org/2000/svg" class="flowchart" style="max-width: 590.203125px;" viewbox="0 0 590.203125 273.6328125" role="graphics-document document" aria-roledescription="flowchart-v2"><style>#mermaid-diagram-2252912776327195633{font-family:“trebuchet ms”,verdana,arial,sans-serif;font-size:16px;fill:#333;}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoffset:0;}}#mermaid-diagram-2252912776327195633 .edge-animation-slow{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 50s linear infinite;stroke-linecap:round;}#mermaid-diagram-2252912776327195633 .edge-animation-fast{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 20s linear infinite;stroke-linecap:round;}#mermaid-diagram-2252912776327195633 .error-icon{fill:#552222;}#mermaid-diagram-2252912776327195633 .error-text{fill:#552222;stroke:#552222;}#mermaid-diagram-2252912776327195633 .edge-thickness-normal{stroke-width:1px;}#mermaid-diagram-2252912776327195633 .edge-thickness-thick{stroke-width:3.5px;}#mermaid-diagram-2252912776327195633 .edge-pattern-solid{stroke-dasharray:0;}#mermaid-diagram-2252912776327195633 .edge-thickness-invisible{stroke-width:0;fill:none;}#mermaid-diagram-2252912776327195633 .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-diagram-2252912776327195633 .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-diagram-2252912776327195633 .marker{fill:#333333;stroke:#333333;}#mermaid-diagram-2252912776327195633 .marker.cross{stroke:#333333;}#mermaid-diagram-2252912776327195633 svg{font-family:“trebuchet ms”,verdana,arial,sans-serif;font-size:16px;}#mermaid-diagram-2252912776327195633 p{margin:0;}#mermaid-diagram-2252912776327195633 .label{font-family:“trebuchet ms”,verdana,arial,sans-serif;color:#333;}#mermaid-diagram-2252912776327195633 .cluster-label text{fill:#333;}#mermaid-diagram-2252912776327195633 .cluster-label span{color:#333;}#mermaid-diagram-2252912776327195633 .cluster-label span p{background-color:transparent;}#mermaid-diagram-2252912776327195633 .label text,#mermaid-diagram-2252912776327195633 span{fill:#333;color:#333;}#mermaid-diagram-2252912776327195633 .node rect,#mermaid-diagram-2252912776327195633 .node circle,#mermaid-diagram-2252912776327195633 .node ellipse,#mermaid-diagram-2252912776327195633 .node polygon,#mermaid-diagram-2252912776327195633 .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}#mermaid-diagram-2252912776327195633 .rough-node .label text,#mermaid-diagram-2252912776327195633 .node .label text,#mermaid-diagram-2252912776327195633 .image-shape .label,#mermaid-diagram-2252912776327195633 .icon-shape .label{text-anchor:middle;}#mermaid-diagram-2252912776327195633 .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#mermaid-diagram-2252912776327195633 .rough-node .label,#mermaid-diagram-2252912776327195633 .node .label,#mermaid-diagram-2252912776327195633 .image-shape .label,#mermaid-diagram-2252912776327195633 .icon-shape .label{text-align:center;}#mermaid-diagram-2252912776327195633 .node.clickable{cursor:pointer;}#mermaid-diagram-2252912776327195633 .root .anchor path{fill:#333333!important;stroke-width:0;stroke:#333333;}#mermaid-diagram-2252912776327195633 .arrowheadPath{fill:#333333;}#mermaid-diagram-2252912776327195633 .edgePath .path{stroke:#333333;stroke-width:2.0px;}#mermaid-diagram-2252912776327195633 .flowchart-link{stroke:#333333;fill:none;}#mermaid-diagram-2252912776327195633 .edgeLabel{background-color:rgba(232,232,232, 0.8);text-align:center;}#mermaid-diagram-2252912776327195633 .edgeLabel p{background-color:rgba(232,232,232, 0.8);}#mermaid-diagram-2252912776327195633 .edgeLabel rect{opacity:0.5;background-color:rgba(232,232,232, 0.8);fill:rgba(232,232,232, 0.8);}#mermaid-diagram-2252912776327195633 .labelBkg{background-color:rgba(232, 232, 232, 0.5);}#mermaid-diagram-2252912776327195633 .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}#mermaid-diagram-2252912776327195633 .cluster text{fill:#333;}#mermaid-diagram-2252912776327195633 .cluster span{color:#333;}#mermaid-diagram-2252912776327195633 div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:“trebuchet ms”,verdana,arial,sans-serif;font-size:12px;background:hsl(80, 100%, 96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-diagram-2252912776327195633 .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#333;}#mermaid-diagram-2252912776327195633 rect.text{fill:none;stroke-width:0;}#mermaid-diagram-2252912776327195633 .icon-shape,#mermaid-diagram-2252912776327195633 .image-shape{background-color:rgba(232,232,232, 0.8);text-align:center;}#mermaid-diagram-2252912776327195633 .icon-shape p,#mermaid-diagram-2252912776327195633 .image-shape p{background-color:rgba(232,232,232, 0.8);padding:2px;}#mermaid-diagram-2252912776327195633 .icon-shape rect,#mermaid-diagram-2252912776327195633 .image-shape rect{opacity:0.5;background-color:rgba(232,232,232, 0.8);fill:rgba(232,232,232, 0.8);}#mermaid-diagram-2252912776327195633 .label-icon{display:inline-block;height:1em;overflow:visible;vertical-align:-0.125em;}#mermaid-diagram-2252912776327195633 .node .label-icon path{fill:currentColor;stroke:revert;stroke-width:revert;}#mermaid-diagram-2252912776327195633 :root{–mermaid-font-family:“trebuchet ms”,verdana,arial,sans-serif;}#mermaid-diagram-2252912776327195633 .utxo&gt;<em>{fill:#eef9ee!important;stroke:#2f7d32!important;stroke-width:2px!important;color:#1f3a22!important;}#mermaid-diagram-2252912776327195633 .utxo span{fill:#eef9ee!important;stroke:#2f7d32!important;stroke-width:2px!important;color:#1f3a22!important;}#mermaid-diagram-2252912776327195633 .utxo tspan{fill:#1f3a22!important;}#mermaid-diagram-2252912776327195633 .spent&gt;</em>{fill:#ffffff!important;stroke:#777!important;stroke-width:2px!important;stroke-dasharray:6 4!important;color:#555!important;}#mermaid-diagram-2252912776327195633 .spent span{fill:#ffffff!important;stroke:#777!important;stroke-width:2px!important;stroke-dasharray:6 4!important;color:#555!important;}#mermaid-diagram-2252912776327195633 .spent tspan{fill:#555!important;}#mermaid-diagram-2252912776327195633 .tx&gt;*{fill:#e8f1ff!important;stroke:#3566a8!important;stroke-width:1.5px!important;color:#1d2f52!important;}#mermaid-diagram-2252912776327195633 .tx span{fill:#e8f1ff!important;stroke:#3566a8!important;stroke-width:1.5px!important;color:#1d2f52!important;}#mermaid-diagram-2252912776327195633 .tx tspan{fill:#1d2f52!important;}</style><g><marker id="mermaid-diagram-2252912776327195633_flowchart-v2-pointEnd" class="marker flowchart-v2" viewbox="0 0 10 10" refx="5" refy="5" markerunits="userSpaceOnUse" markerwidth="8" markerheight="8" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker><marker id="mermaid-diagram-2252912776327195633_flowchart-v2-pointStart" class="marker flowchart-v2" viewbox="0 0 10 10" refx="4.5" refy="5" markerunits="userSpaceOnUse" markerwidth="8" markerheight="8" orient="auto"><path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker><marker id="mermaid-diagram-2252912776327195633_flowchart-v2-circleEnd" class="marker flowchart-v2" viewbox="0 0 10 10" refx="11" refy="5" markerunits="userSpaceOnUse" markerwidth="11" markerheight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></circle></marker><marker id="mermaid-diagram-2252912776327195633_flowchart-v2-circleStart" class="marker flowchart-v2" viewbox="0 0 10 10" refx="-1" refy="5" markerunits="userSpaceOnUse" markerwidth="11" markerheight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></circle></marker><marker id="mermaid-diagram-2252912776327195633_flowchart-v2-crossEnd" class="marker cross flowchart-v2" viewbox="0 0 11 11" refx="12" refy="5.2" markerunits="userSpaceOnUse" markerwidth="11" markerheight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"></path></marker><marker id="mermaid-diagram-2252912776327195633_flowchart-v2-crossStart" class="marker cross flowchart-v2" viewbox="0 0 11 11" refx="-1" refy="5.2" markerunits="userSpaceOnUse" markerwidth="11" markerheight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"></path></marker><g class="root"><g class="clusters"><g class="cluster tx" id="TX1" data-look="classic"><rect style="fill:#e8f1ff !important;stroke:#3566a8 !important;stroke-width:1.5px !important" x="291.1875" y="8" width="140.625" height="257.59375"></rect><g class="cluster-label" transform="translate(316.140625, 8)"><foreignobject width="90.71875" height="24">
+<div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel" style="color:#1d2f52 !important">
+<p>TX 3bc…91a</p>
+</span></div>
+</foreignobject></g></g></g><g class="edgePaths"><path d="M241.188,141.797L245.354,141.797C249.521,141.797,257.854,141.797,266.188,141.797C274.521,141.797,282.854,141.797,290.521,141.797C298.188,141.797,305.188,141.797,308.688,141.797L312.188,141.797" id="L_CB_U0_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_CB_U0_0" data-points="W3sieCI6MjQxLjE4NzUsInkiOjE0MS43OTY4NzV9LHsieCI6MjY2LjE4NzUsInkiOjE0MS43OTY4NzV9LHsieCI6MjkxLjE4NzUsInkiOjE0MS43OTY4NzV9LHsieCI6MzE2LjE4NzUsInkiOjE0MS43OTY4NzV9XQ==" marker-end="url(#mermaid-diagram-2252912776327195633_flowchart-v2-pointEnd)"></path><path d="M431.813,68.156L435.979,68.156C440.146,68.156,448.479,68.156,456.664,68.156C464.849,68.156,472.885,68.156,476.904,68.156L480.922,68.156" id="L_TX1_U1_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_TX1_U1_0" data-points="W3sieCI6MzkyLjc5MTY0NzM4Mzg1NywieSI6MTA5LjAyNDA4OTYzOTk3MzcyfSx7IngiOjQzMS44MTI1LCJ5Ijo2OC4xNTYyNX0seyJ4Ijo0NTYuODEyNSwieSI6NjguMTU2MjV9LHsieCI6NDg0LjkyMTg3NSwieSI6NjguMTU2MjV9XQ==" marker-end="url(#mermaid-diagram-2252912776327195633_flowchart-v2-pointEnd)"></path><path d="M431.813,215.438L435.979,215.438C440.146,215.438,448.479,215.438,456.146,215.438C463.813,215.438,470.813,215.438,474.313,215.438L477.813,215.438" id="L_TX1_U2_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_TX1_U2_0" data-points="W3sieCI6MzkyLjc5MTY0NzM4Mzg1NywieSI6MTc0LjU2OTY2MDM2MDAyNjI2fSx7IngiOjQzMS44MTI1LCJ5IjoyMTUuNDM3NX0seyJ4Ijo0NTYuODEyNSwieSI6MjE1LjQzNzV9LHsieCI6NDgxLjgxMjUsInkiOjIxNS40Mzc1fV0=" marker-end="url(#mermaid-diagram-2252912776327195633_flowchart-v2-pointEnd)"></path></g><g class="edgeLabels"><g class="edgeLabel"><g class="label" data-id="L_CB_U0_0" transform="translate(0, 0)"><foreignobject width="0" height="0">
+<div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div>
+</foreignobject></g></g><g class="edgeLabel"><g class="label" data-id="L_TX1_U1_0" transform="translate(0, 0)"><foreignobject width="0" height="0">
+<div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div>
+</foreignobject></g></g><g class="edgeLabel"><g class="label" data-id="L_TX1_U2_0" transform="translate(0, 0)"><foreignobject width="0" height="0">
+<div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div>
+</foreignobject></g></g></g><g class="nodes"><g class="root" transform="translate(0, 69.296875)"><g class="clusters"><g class="cluster tx" id="CB" data-look="classic"><rect style="fill:#e8f1ff !important;stroke:#3566a8 !important;stroke-width:1.5px !important" x="8" y="8" width="233.1875" height="129"></rect><g class="cluster-label" transform="translate(45.1328125, 8)"><foreignobject width="158.921875" height="24">
+<div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel" style="color:#1d2f52 !important">
+<p>Coinbase TX 7a1…e3f</p>
+</span></div>
+</foreignobject></g></g></g><g class="edgePaths"></g><g class="edgeLabels"></g><g class="nodes"><g class="node default" id="flowchart-C-0" transform="translate(124.59375, 72.5)"><rect class="basic label-container" style="" x="-81.59375" y="-27" width="163.1875" height="54"></rect><g class="label" style="" transform="translate(-51.59375, -12)"><rect></rect><foreignobject width="103.1875" height="24">
+<div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel">
+<p>coinbase input</p>
+</span></div>
+</foreignobject></g></g></g></g><g class="node default spent" id="flowchart-U0-1" transform="translate(361.5, 141.796875)"><circle class="basic label-container" style="fill:#ffffff !important;stroke:#777 !important;stroke-width:2px !important;stroke-dasharray:6 4 !important" r="45.3125" cx="0" cy="0"></circle><g class="label" style="color:#555 !important" transform="translate(-37.8125, -24)"><rect></rect><foreignobject width="75.625" height="48">
+<div style="color: rgb(85, 85, 85) !important; display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" xmlns="http://www.w3.org/1999/xhtml"><span style="color:#555 !important" class="nodeLabel">
+<p>7a1…e3f:0<br>50 BTC</p>
+</span></div>
+</foreignobject></g></g><g class="node default utxo" id="flowchart-U1-2" transform="translate(532.0078125, 68.15625)"><circle class="basic label-container" style="fill:#eef9ee !important;stroke:#2f7d32 !important;stroke-width:2px !important" r="47.0859375" cx="0" cy="0"></circle><g class="label" style="color:#1f3a22 !important" transform="translate(-39.5859375, -24)"><rect></rect><foreignobject width="79.171875" height="48">
+<div style="color: rgb(31, 58, 34) !important; display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" xmlns="http://www.w3.org/1999/xhtml"><span style="color:#1f3a22 !important" class="nodeLabel">
+<p>3bc…91a:0<br>30 BTC</p>
+</span></div>
+</foreignobject></g></g><g class="node default utxo" id="flowchart-U2-3" transform="translate(532.0078125, 215.4375)"><circle class="basic label-container" style="fill:#eef9ee !important;stroke:#2f7d32 !important;stroke-width:2px !important" r="50.1953125" cx="0" cy="0"></circle><g class="label" style="color:#1f3a22 !important" transform="translate(-42.6953125, -24)"><rect></rect><foreignobject width="85.390625" height="48">
+<div style="color: rgb(31, 58, 34) !important; display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" xmlns="http://www.w3.org/1999/xhtml"><span style="color:#1f3a22 !important" class="nodeLabel">
+<p>3bc…91a:1<br>19.999 BTC</p>
+</span></div>
+</foreignobject></g></g></g></g></g></svg></p>
 
                     </main>
 
@@ -2132,8 +2135,6 @@ the <code>internal_key</code> public key hash that we generated earlier. <a href
         <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="mermaid-eefea253.min.js"></script>
-        <script src="mermaid-init-efde2d04.js"></script>
 
         <script>
         window.addEventListener('load', function() {
