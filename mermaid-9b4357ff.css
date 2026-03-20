@@ -4,17 +4,18 @@ pre.mermaid {
     padding: 0;
     margin: 1.5rem 0;
     overflow-x: auto;
-}
-
-pre.mermaid:not([data-processed]) {
     visibility: hidden;
 }
 
-pre.mermaid[data-processed="true"] {
+pre.mermaid[data-mermaid-state="rendered"] {
     visibility: visible;
 }
 
-pre.mermaid[data-processed="true"] svg {
+pre.mermaid[data-mermaid-state="error"] {
+    visibility: visible;
+}
+
+pre.mermaid[data-mermaid-state="rendered"] svg {
     display: block;
     max-width: 100%;
     height: auto;
