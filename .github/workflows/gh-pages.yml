@@ -22,12 +22,24 @@ jobs:
         with:
           mdbook-version: '0.5.2'
 
-      - name: Install mdbook-mermaid
-        run: cargo install mdbook-mermaid --version 0.17.0 --locked
+      - name: Install mdbook-mermaid-ssr
+        run: cargo install mdbook-mermaid-ssr --version 0.3.0 --locked
+
+      - name: Setup Chrome
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: stable
+
+      - name: Expose Chrome for mdbook-mermaid-ssr
+        run: |
+          mkdir -p /tmp/chrome-bin
+          ln -sf "${{ steps.setup-chrome.outputs.chrome-path }}" /tmp/chrome-bin/google-chrome
+          /tmp/chrome-bin/google-chrome --version
 
       - name: Build mdbook
         working-directory: ./cookbook
-        run: mdbook build
+        run: PATH="/tmp/chrome-bin:$PATH" mdbook build
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4

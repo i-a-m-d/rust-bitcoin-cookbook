@@ -5,11 +5,7 @@
 # EXAMPLE: PSBT = "PSBT"
 
 [files]
-extend-exclude = [
-    "site/themes/nightfall", 
-    "cookbook/mermaid.min.js",
-    "cookbook/mermaid-init.js"
-    ]
+extend-exclude = ["site/themes/nightfall"]
 
 [type.gitignore]
 extend-glob = [".gitignore"]

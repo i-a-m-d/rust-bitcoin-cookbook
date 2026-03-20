@@ -12,14 +12,9 @@ description = "A cookbook for Rust Bitcoin development"
 [rust]
 edition = "2021"
 
-[output.html]
-additional-css = ["mermaid.css"]
-additional-js = ["mermaid.min.js", "mermaid-init.js"]
-
 [output.html.playground]
 runnable = false # playground is not runnable by default
 
 [preprocessor]
 
-[preprocessor.mermaid]
-command = "mdbook-mermaid"
+[preprocessor.mermaid-ssr]
