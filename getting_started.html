@@ -225,7 +225,7 @@ bitcoin = "0.32.8"
 <h2 id="write-a-first-tiny-program"><a class="header" href="#write-a-first-tiny-program">Write a first tiny program</a></h2>
 <p>A fun first program is one that generates a brand new testnet keypair and prints the corresponding WIF and address.</p>
 <p>Replace the default contents of <code>src/main.rs</code> with:</p>
-<pre><code class="language-rust">use bitcoin::key::Secp256k1;
+<pre><code class="language-rust runnable-example">use bitcoin::key::Secp256k1;
 use bitcoin::{Address, Network, PrivateKey};
 
 fn main() {
@@ -238,6 +238,9 @@ fn main() {
     println!("private key (WIF): {}", private_key.to_wif());
     println!("testnet address: {}", address);
 }</code></pre>
+<script type="application/json" class="runnable-example-output">
+{"delay_ms":180,"mode":"nondeterministic","outputs_base64":["cHJpdmF0ZSBrZXkgKFdJRik6IGNUMjUxVFNURU1qOVA5UVpGclpxcExYSjFoUFJtQXdmUEJId0g2V2pmeWFVYnlEYmY0ZXIKdGVzdG5ldCBhZGRyZXNzOiB0YjFxOGZoYzJueW1ra2N3emNwbWtuc2toOGdtcWRyZ3VhanozNGFwZWwK","cHJpdmF0ZSBrZXkgKFdJRik6IGNTcmFZS0FiMWk5TUQ2TERvTGF1RUs1b1U4V3NkUUt0b2NXNVpWQXVDdlVvdjZxQ3BjUU0KdGVzdG5ldCBhZGRyZXNzOiB0YjFxMzRrdDl3ZWQzNDJ6a3UweWMzcjhwdmM5ZTVmaDBydDRkbG5uM2MK","cHJpdmF0ZSBrZXkgKFdJRik6IGNTaTZvTDM2S3JjWHJtWFhDNEQxYUdhSzY1ODI5SHF1dFo5cVJpNnhaaUpiaEpGWVFWU1EKdGVzdG5ldCBhZGRyZXNzOiB0YjFxcTl3Y2s1ZHprbjZmd3EzODhqbGFjcXM2MnZ0bmdyN3p3dmU0ZTcK","cHJpdmF0ZSBrZXkgKFdJRik6IGNOUTRrQ1NGbmFaVXJKamJBZ1RkZ1lyNVVLblBIU1NoR29Zend0dVJFekhLTXlta2VCcWIKdGVzdG5ldCBhZGRyZXNzOiB0YjFxZTcyeXh1NGY0YzduZWg0eWZ6NGp1M256Z3JhZjg0Z3M0enAzNmsK","cHJpdmF0ZSBrZXkgKFdJRik6IGNRcVI2SmJ0V05NYVNudEdMQlZvdVBlSzFBUTI0S0tOYjV2VEVyTkxWa3BGc1NEb3B3eVEKdGVzdG5ldCBhZGRyZXNzOiB0YjFxeGFseGY3NmtoMGwyMmQ5M3l6OXR4bTl6bjV2NzQ0OWR0ZXhjdGUK","cHJpdmF0ZSBrZXkgKFdJRik6IGNQUjVFSHhNS3A5RFJzWlJIYVBNQnExdGl0aG5ENnI2cFE1dG45MThiQ25aRmNmVFFQSnIKdGVzdG5ldCBhZGRyZXNzOiB0YjFxaHBsdTltc3lkeWVnbHU5cXhnbGxzNzZ3a201dHh2NWcwYXY0Zm4K","cHJpdmF0ZSBrZXkgKFdJRik6IGNNdUtqQzFodHVBenFFc2lrWlRDa0FKUVU4em9iNGk3Q1VpamdRN2FibTk2c1ptYjJpTFoKdGVzdG5ldCBhZGRyZXNzOiB0YjFxanFjY201ZmcyMGRqbGE4OGEyajczMDVmOTcydG40MDJ5cWdlcGsK","cHJpdmF0ZSBrZXkgKFdJRik6IGNWcG5OcTdFYUQySmZVVENGY1oycWJoQ1RVN0RzMVh5eE05YmVkYjFjOFBrUlZTOHZzTTYKdGVzdG5ldCBhZGRyZXNzOiB0YjFxZWhweDI1ZGRhZzlobDZmd2R0c2YzY2xjcXJlc3VkeDY4ZHBmcDAK","cHJpdmF0ZSBrZXkgKFdJRik6IGNVdWhKMlR6YjJ3ZWFLanNDaUh6S2FOYURaQlp2RExBbXZWWGNDajJBdXh2UEZvc2FZc00KdGVzdG5ldCBhZGRyZXNzOiB0YjFxY3p5NjZ5eDBtbnl0eWR4M3B1eThrcjc5eHlrdmZwMDRnNTJleDYK","cHJpdmF0ZSBrZXkgKFdJRik6IGNQVlIyNlJoYW1KdkttRnQ4Skh2cGhFc1hGUllrOHd6U0FDTEhpRXJSYXp5Z1lXV1daOVMKdGVzdG5ldCBhZGRyZXNzOiB0YjFxcG16NThwOHUwYTd3dnBwZDg3ZWtld3pnNmQ4czBjdTl0cG01eG0K"]}
+</script>
 <p>Then run it:</p>
 <pre><code class="language-bash">cargo run
 </code></pre>
