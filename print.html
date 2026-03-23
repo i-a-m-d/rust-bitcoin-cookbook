@@ -32,6 +32,7 @@
         <link rel="stylesheet" href="mermaid-ssr-fixes-cad0f612.css">
         <link rel="stylesheet" href="sidebar-886cee35.css">
         <link rel="stylesheet" href="runnable_examples-db487800.css">
+        <link rel="stylesheet" href="notes-90dccfba.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -39,10 +40,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-30e1fff5.js";
+            window.path_to_searchindex_js = "searchindex-f8229b75.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-2892cf0b.js"></script>
+        <script src="toc-34d8fa6a.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -194,6 +195,13 @@ covered here, two that you might like to check out are:</p>
 <p>Finally, this book is currently a work in progress but hopes to eventually cover various topics,
 including parsing blocks and transactions, constructing and signing transactions, receiving data
 over the peer-to-peer network, plus fun stuff you can do with miniscript.</p>
+<div class="book-note book-note-note">
+<p class="book-note-title">Note</p>
+
+<p>Running the examples in this book reveals pre-computed output.</p>
+
+</div>
+
 <h2 id="table-of-contents"><a class="header" href="#table-of-contents">Table of Contents</a></h2>
 <ol>
 <li><a href="#getting-started">Getting Started</a></li>
@@ -1770,6 +1778,61 @@ This is due to the fact that we need to pay a miner’s fee for the transaction.
 the <code>internal_key</code> public key hash that we generated earlier. <a href="#fr-spend-1-3">↩</a></p>
 </li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="note-demo"><a class="header" href="#note-demo">Note Demo</a></h1>
+<p>This page exists to demonstrate the custom note styles available in the book.</p>
+<h2 id="note"><a class="header" href="#note">Note</a></h2>
+<div class="book-note book-note-note">
+<p class="book-note-title">Note</p>
+
+<p>Use a standard note for neutral context, background, or a general heads-up that supports the surrounding explanation.</p>
+
+</div>
+
+<h2 id="tip"><a class="header" href="#tip">Tip</a></h2>
+<div class="book-note book-note-tip">
+<p class="book-note-title">Tip</p>
+
+<p>Use a tip for practical shortcuts, smoother workflows, or small habits that make the reader’s life easier.</p>
+
+</div>
+
+<h2 id="important"><a class="header" href="#important">Important</a></h2>
+<div class="book-note book-note-important">
+<p class="book-note-title">Important</p>
+
+<p>Use an important note when the reader should pay close attention because a concept or requirement is easy to miss.</p>
+
+</div>
+
+<h2 id="warning"><a class="header" href="#warning">Warning</a></h2>
+<div class="book-note book-note-warning">
+<p class="book-note-title">Warning</p>
+
+<p>Use a warning when a mistake is likely to cause confusion, invalid output, or time-consuming debugging.</p>
+
+</div>
+
+<h2 id="caution"><a class="header" href="#caution">Caution</a></h2>
+<div class="book-note book-note-caution">
+<p class="book-note-title">Caution</p>
+
+<p>Use a caution note when the reader could expose sensitive material, lose funds, or take a risk that deserves extra care.</p>
+
+</div>
+
+<h2 id="authoring"><a class="header" href="#authoring">Authoring</a></h2>
+<p>The helper syntax is:</p>
+<pre><code class="language-md">{{#note tip}}
+Use `cargo add bitcoin --features rand-std` if you want random key generation.
+{{/note}}
+</code></pre>
+<p>You can also override the default title:</p>
+<pre><code class="language-md">{{#note note title="Runnable Examples"}}
+This note uses a custom title while keeping the base note style.
+{{/note}}
+</code></pre>
+<p>Raw HTML still works if you want full manual control, but the helper syntax should cover most cases.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="mermaid-demo"><a class="header" href="#mermaid-demo">Mermaid Demo</a></h1>
 <p>This page exists to demonstrate Mermaid support in the book build.</p>

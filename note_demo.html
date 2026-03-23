@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Introduction - Rust Bitcoin Cookbook</title>
+        <title>Note Demo - Rust Bitcoin Cookbook</title>
 
 
         <!-- Custom HTML head -->
@@ -178,59 +178,70 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>This book is created and maintained by those involved in the
-<a href="https://github.com/rust-bitcoin"><code>rust-bitcoin</code></a> GitHub organization, contributions are
-appreciated. It covers various crates from the org and as such, aims to be useful to developers
-wanting to write code in Rust that interacts with the Bitcoin network. It is specifically not
-limited to just the <a href="https://github.com/rust-bitcoin/rust-bitcoin"><code>rust-bitcoin</code></a> crate, although
-that is a good starting point if you want a one-stop-shop for interacting with Bitcoin in Rust.</p>
-<p>There are a number of good libraries outside of the <code>rust-bitcoin</code> organization that use the crates
-covered here, two that you might like to check out are:</p>
-<ul>
-<li><a href="https://bitcoindevkit.org/"><code>Bitcoin Dev Kit</code></a></li>
-<li><a href="https://lightningdevkit.org/"><code>Lightning Dev Kit</code></a></li>
-</ul>
-<p>Finally, this book is currently a work in progress but hopes to eventually cover various topics,
-including parsing blocks and transactions, constructing and signing transactions, receiving data
-over the peer-to-peer network, plus fun stuff you can do with miniscript.</p>
+                        <h1 id="note-demo"><a class="header" href="#note-demo">Note Demo</a></h1>
+<p>This page exists to demonstrate the custom note styles available in the book.</p>
+<h2 id="note"><a class="header" href="#note">Note</a></h2>
 <div class="book-note book-note-note">
 <p class="book-note-title">Note</p>
 
-<p>Running the examples in this book reveals pre-computed output.</p>
+<p>Use a standard note for neutral context, background, or a general heads-up that supports the surrounding explanation.</p>
 
 </div>
 
-<h2 id="table-of-contents"><a class="header" href="#table-of-contents">Table of Contents</a></h2>
-<ol>
-<li><a href="getting_started.html">Getting Started</a></li>
-<li><a href="tx.html">Constructing and Signing Transactions</a>
-<ol>
-<li><a href="tx_segwit-v0.html">SegWit V0</a></li>
-<li><a href="tx_taproot.html">Taproot</a></li>
-</ol>
-</li>
-<li><a href="psbt.html">Working with PSBTs</a>
-<ol>
-<li>Constructing and Signing Multiple Inputs:
-<ol>
-<li><a href="psbt/multiple_inputs_segwit-v0.html">SegWit V0</a></li>
-<li><a href="psbt/multiple_inputs_taproot.html">Taproot</a></li>
-</ol>
-</li>
-</ol>
-</li>
-</ol>
-<h2 id="license"><a class="header" href="#license">License</a></h2>
-<p>This website is licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0 Universal (CC0 1.0) Public Domain Dedication</a>.</p>
-<p><a href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://licensebuttons.net/l/by-sa/4.0/88x31.png" alt="CC BY-SA 4.0"></a></p>
+<h2 id="tip"><a class="header" href="#tip">Tip</a></h2>
+<div class="book-note book-note-tip">
+<p class="book-note-title">Tip</p>
+
+<p>Use a tip for practical shortcuts, smoother workflows, or small habits that make the reader’s life easier.</p>
+
+</div>
+
+<h2 id="important"><a class="header" href="#important">Important</a></h2>
+<div class="book-note book-note-important">
+<p class="book-note-title">Important</p>
+
+<p>Use an important note when the reader should pay close attention because a concept or requirement is easy to miss.</p>
+
+</div>
+
+<h2 id="warning"><a class="header" href="#warning">Warning</a></h2>
+<div class="book-note book-note-warning">
+<p class="book-note-title">Warning</p>
+
+<p>Use a warning when a mistake is likely to cause confusion, invalid output, or time-consuming debugging.</p>
+
+</div>
+
+<h2 id="caution"><a class="header" href="#caution">Caution</a></h2>
+<div class="book-note book-note-caution">
+<p class="book-note-title">Caution</p>
+
+<p>Use a caution note when the reader could expose sensitive material, lose funds, or take a risk that deserves extra care.</p>
+
+</div>
+
+<h2 id="authoring"><a class="header" href="#authoring">Authoring</a></h2>
+<p>The helper syntax is:</p>
+<pre><code class="language-md">{{#note tip}}
+Use `cargo add bitcoin --features rand-std` if you want random key generation.
+{{/note}}
+</code></pre>
+<p>You can also override the default title:</p>
+<pre><code class="language-md">{{#note note title="Runnable Examples"}}
+This note uses a custom title while keeping the base note style.
+{{/note}}
+</code></pre>
+<p>Raw HTML still works if you want full manual control, but the helper syntax should cover most cases.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="psbt/multiple_inputs_taproot.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
 
-                            <a rel="next prefetch" href="getting_started.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="mermaid_demo.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -240,8 +251,11 @@ over the peer-to-peer network, plus fun stuff you can do with miniscript.</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="psbt/multiple_inputs_taproot.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
 
-                    <a rel="next prefetch" href="getting_started.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="mermaid_demo.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
