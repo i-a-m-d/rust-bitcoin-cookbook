@@ -17,6 +17,10 @@ Finally, this book is currently a work in progress but hopes to eventually cover
 including parsing blocks and transactions, constructing and signing transactions, receiving data
 over the peer-to-peer network, plus fun stuff you can do with miniscript.
 
+{{#note note}}
+Running the examples in this book reveals pre-computed output.
+{{/note}}
+
 ## Table of Contents
 
 1. [Getting Started](getting_started.md)

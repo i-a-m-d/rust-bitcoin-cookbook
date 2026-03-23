@@ -1,0 +1,137 @@
+:root {
+    --book-note-radius: 4px;
+    --book-note-border-width: 1px;
+    --book-note-rail-width: 0.42rem;
+    --book-note-title-size: 0.78em;
+    --book-note-title-weight: 800;
+    --book-note-padding-y: 0.95rem;
+    --book-note-padding-x: 1rem;
+    --book-note-gap: 0.55rem;
+}
+
+.book-note {
+    margin: 1.5rem 0;
+    padding: var(--book-note-padding-y) var(--book-note-padding-x);
+    border: var(--book-note-border-width) solid var(--book-note-border, currentColor);
+    border-left: var(--book-note-rail-width) solid var(--book-note-accent, currentColor);
+    border-radius: var(--book-note-radius);
+    background: var(--book-note-bg, rgba(127, 127, 127, 0.06));
+}
+
+.book-note-title {
+    display: inline-flex;
+    align-items: center;
+    margin: 0 0 var(--book-note-gap);
+    padding-bottom: 0.38rem;
+    border-bottom: 1px solid var(--book-note-rule, rgba(0, 0, 0, 0.08));
+    font-size: var(--book-note-title-size);
+    font-weight: var(--book-note-title-weight);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--book-note-title-color, inherit);
+}
+
+.book-note-title::before {
+    content: none;
+}
+
+.book-note > :last-child {
+    margin-bottom: 0;
+}
+
+.book-note p,
+.book-note ul,
+.book-note ol {
+    margin-top: 0;
+}
+
+.book-note-note {
+    --book-note-accent: #3468c9;
+    --book-note-border: rgba(52, 104, 201, 0.32);
+    --book-note-bg: rgba(52, 104, 201, 0.05);
+    --book-note-rule: rgba(52, 104, 201, 0.18);
+    --book-note-title-color: #254d98;
+}
+
+.book-note-tip {
+    --book-note-accent: #177245;
+    --book-note-border: rgba(23, 114, 69, 0.3);
+    --book-note-bg: rgba(23, 114, 69, 0.055);
+    --book-note-rule: rgba(23, 114, 69, 0.18);
+    --book-note-title-color: #125a37;
+}
+
+.book-note-important {
+    --book-note-accent: #6c45b8;
+    --book-note-border: rgba(108, 69, 184, 0.3);
+    --book-note-bg: rgba(108, 69, 184, 0.055);
+    --book-note-rule: rgba(108, 69, 184, 0.18);
+    --book-note-title-color: #543590;
+}
+
+.book-note-warning {
+    --book-note-accent: #a96200;
+    --book-note-border: rgba(169, 98, 0, 0.32);
+    --book-note-bg: rgba(169, 98, 0, 0.06);
+    --book-note-rule: rgba(169, 98, 0, 0.2);
+    --book-note-title-color: #834d00;
+}
+
+.book-note-caution {
+    --book-note-accent: #b33636;
+    --book-note-border: rgba(179, 54, 54, 0.32);
+    --book-note-bg: rgba(179, 54, 54, 0.06);
+    --book-note-rule: rgba(179, 54, 54, 0.2);
+    --book-note-title-color: #8e2b2b;
+}
+
+.ayu .book-note,
+.navy .book-note,
+.coal .book-note {
+    background: var(--book-note-bg);
+}
+
+.ayu .book-note-note,
+.navy .book-note-note,
+.coal .book-note-note {
+    --book-note-border: rgba(129, 175, 255, 0.32);
+    --book-note-bg: rgba(129, 175, 255, 0.11);
+    --book-note-rule: rgba(129, 175, 255, 0.22);
+    --book-note-title-color: #a9c5ff;
+}
+
+.ayu .book-note-tip,
+.navy .book-note-tip,
+.coal .book-note-tip {
+    --book-note-border: rgba(114, 225, 170, 0.3);
+    --book-note-bg: rgba(114, 225, 170, 0.11);
+    --book-note-rule: rgba(114, 225, 170, 0.22);
+    --book-note-title-color: #8be6bc;
+}
+
+.ayu .book-note-important,
+.navy .book-note-important,
+.coal .book-note-important {
+    --book-note-border: rgba(194, 164, 255, 0.3);
+    --book-note-bg: rgba(194, 164, 255, 0.11);
+    --book-note-rule: rgba(194, 164, 255, 0.22);
+    --book-note-title-color: #d7c3ff;
+}
+
+.ayu .book-note-warning,
+.navy .book-note-warning,
+.coal .book-note-warning {
+    --book-note-border: rgba(255, 196, 112, 0.31);
+    --book-note-bg: rgba(255, 196, 112, 0.11);
+    --book-note-rule: rgba(255, 196, 112, 0.24);
+    --book-note-title-color: #ffd89c;
+}
+
+.ayu .book-note-caution,
+.navy .book-note-caution,
+.coal .book-note-caution {
+    --book-note-border: rgba(255, 133, 133, 0.31);
+    --book-note-bg: rgba(255, 133, 133, 0.11);
+    --book-note-rule: rgba(255, 133, 133, 0.24);
+    --book-note-title-color: #ffb8b8;
+}

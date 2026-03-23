@@ -13,7 +13,7 @@ description = "A cookbook for Rust Bitcoin development"
 edition = "2021"
 
 [output.html]
-additional-css = ["mermaid-ssr-fixes.css", "sidebar.css", "runnable_examples.css"]
+additional-css = ["mermaid-ssr-fixes.css", "sidebar.css", "runnable_examples.css", "notes.css"]
 additional-js = ["runnable_examples.js"]
 
 [output.html.playground]
