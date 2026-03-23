@@ -31,6 +31,7 @@
         <!-- Custom theme stylesheets -->
         <link rel="stylesheet" href="mermaid-ssr-fixes-cad0f612.css">
         <link rel="stylesheet" href="sidebar-886cee35.css">
+        <link rel="stylesheet" href="runnable_examples-db487800.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -38,10 +39,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-bffec089.js";
+            window.path_to_searchindex_js = "searchindex-30e1fff5.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-70c1a335.js"></script>
+        <script src="toc-2892cf0b.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -280,6 +281,7 @@ fn main() {
 <p>Then run it:</p>
 <pre><code class="language-bash">cargo run
 </code></pre>
+<p>If you use the run button in this book, it will reveal one of several captured sample outputs. Because this example uses randomness, your own locally generated key and address will differ.</p>
 <p>This gives you a quick success case built around three important ideas:</p>
 <ul>
 <li><code>PrivateKey::generate(Network::Testnet)</code> creates a new testnet private key using secure randomness</li>
@@ -397,50 +399,7 @@ and a value of the <code>const DUMMY_UTXO_AMOUNT</code> that we defined earlier.
 We are using the <a href="https://docs.rs/bitcoin/0.32.0/bitcoin/blockdata/transaction/struct.OutPoint.html"><code>OutPoint</code></a> struct to represent the transaction output.
 Finally, we return the tuple <code>(out_point, utxo)</code>.</p>
 <p>Now we are ready for our main function that will sign a transaction that spends a <code>p2wpkh</code> unspent output:</p>
-<pre><code class="language-rust"><span class="boring">use std::str::FromStr;
-</span><span class="boring">
-</span><span class="boring">use bitcoin::hashes::Hash;
-</span><span class="boring">use bitcoin::locktime::absolute;
-</span><span class="boring">use bitcoin::secp256k1::{rand, Message, Secp256k1, SecretKey, Signing};
-</span><span class="boring">use bitcoin::sighash::{EcdsaSighashType, SighashCache};
-</span><span class="boring">use bitcoin::{
-</span><span class="boring">    transaction, Address, Amount, Network, OutPoint, ScriptBuf, Sequence, Transaction, TxIn, TxOut,
-</span><span class="boring">    Txid, WPubkeyHash, Witness,
-</span><span class="boring">};
-</span><span class="boring">
-</span><span class="boring">const DUMMY_UTXO_AMOUNT: Amount = Amount::from_sat(20_000_000);
-</span><span class="boring">const SPEND_AMOUNT: Amount = Amount::from_sat(5_000_000);
-</span><span class="boring">const CHANGE_AMOUNT: Amount = Amount::from_sat(14_999_000); // 1000 sat fee.
-</span><span class="boring">
-</span><span class="boring">fn senders_keys&lt;C: Signing&gt;(secp: &amp;Secp256k1&lt;C&gt;) -&gt; (SecretKey, WPubkeyHash) {
-</span><span class="boring">    let sk = SecretKey::new(&amp;mut rand::thread_rng());
-</span><span class="boring">    let pk = bitcoin::PublicKey::new(sk.public_key(secp));
-</span><span class="boring">    let wpkh = pk.wpubkey_hash().expect("key is compressed");
-</span><span class="boring">
-</span><span class="boring">    (sk, wpkh)
-</span><span class="boring">}
-</span><span class="boring">
-</span><span class="boring">
-</span><span class="boring">fn receivers_address() -&gt; Address {
-</span><span class="boring">    Address::from_str("bc1q7cyrfmck2ffu2ud3rn5l5a8yv6f0chkp0zpemf")
-</span><span class="boring">        .expect("a valid address")
-</span><span class="boring">        .require_network(Network::Bitcoin)
-</span><span class="boring">        .expect("valid address for mainnet")
-</span><span class="boring">}
-</span><span class="boring">
-</span><span class="boring">fn dummy_unspent_transaction_output(wpkh: &amp;WPubkeyHash) -&gt; (OutPoint, TxOut) {
-</span><span class="boring">    let script_pubkey = ScriptBuf::new_p2wpkh(wpkh);
-</span><span class="boring">
-</span><span class="boring">    let out_point = OutPoint {
-</span><span class="boring">       txid: Txid::all_zeros(), // Obviously invalid.
-</span><span class="boring">       vout: 0,
-</span><span class="boring">    };
-</span><span class="boring">
-</span><span class="boring">    let utxo = TxOut { value: DUMMY_UTXO_AMOUNT, script_pubkey };
-</span><span class="boring">
-</span><span class="boring">    (out_point, utxo)
-</span><span class="boring">}
-</span>
+<pre><code class="language-rust">
 fn main() {
     let secp = Secp256k1::new();
 
@@ -731,48 +690,7 @@ We are using the latter, since we are not going to tweak the key.
 We are using the <a href="https://docs.rs/bitcoin/0.32.0/bitcoin/blockdata/transaction/struct.OutPoint.html"><code>OutPoint</code></a> struct to represent the previous transaction output.
 Finally, we return the tuple <code>(out_point, utxo)</code>.</p>
 <p>Now we are ready for our main function that will sign a transaction that spends a <code>p2tr</code> unspent output:</p>
-<pre><code class="language-rust"><span class="boring">use bitcoin::hashes::Hash;
-</span><span class="boring">use bitcoin::key::{Keypair, TapTweak, TweakedKeypair, UntweakedPublicKey};
-</span><span class="boring">use bitcoin::locktime::absolute;
-</span><span class="boring">use bitcoin::secp256k1::{rand, Message, Secp256k1, SecretKey, Signing, Verification};
-</span><span class="boring">use bitcoin::sighash::{Prevouts, SighashCache, TapSighashType};
-</span><span class="boring">use bitcoin::{
-</span><span class="boring">    transaction, Address, Amount, Network, OutPoint, ScriptBuf, Sequence, Transaction, TxIn, TxOut,
-</span><span class="boring">    Txid, Witness,
-</span><span class="boring">};
-</span><span class="boring">
-</span><span class="boring">const DUMMY_UTXO_AMOUNT: Amount = Amount::from_sat(20_000_000);
-</span><span class="boring">const SPEND_AMOUNT: Amount = Amount::from_sat(5_000_000);
-</span><span class="boring">const CHANGE_AMOUNT: Amount = Amount::from_sat(14_999_000); // 1000 sat fee.
-</span><span class="boring">
-</span><span class="boring">fn senders_keys&lt;C: Signing&gt;(secp: &amp;Secp256k1&lt;C&gt;) -&gt; Keypair {
-</span><span class="boring">    let sk = SecretKey::new(&amp;mut rand::thread_rng());
-</span><span class="boring">    Keypair::from_secret_key(secp, &amp;sk)
-</span><span class="boring">}
-</span><span class="boring">
-</span><span class="boring">fn receivers_address() -&gt; Address {
-</span><span class="boring">    "bc1p0dq0tzg2r780hldthn5mrznmpxsxc0jux5f20fwj0z3wqxxk6fpqm7q0va".parse::&lt;Address&lt;_&gt;&gt;()
-</span><span class="boring">        .expect("a valid address")
-</span><span class="boring">        .require_network(Network::Bitcoin)
-</span><span class="boring">        .expect("valid address for mainnet")
-</span><span class="boring">}
-</span><span class="boring">
-</span><span class="boring">fn dummy_unspent_transaction_output&lt;C: Verification&gt;(
-</span><span class="boring">   secp: &amp;Secp256k1&lt;C&gt;,
-</span><span class="boring">   internal_key: UntweakedPublicKey,
-</span><span class="boring">) -&gt; (OutPoint, TxOut) {
-</span><span class="boring">    let script_pubkey = ScriptBuf::new_p2tr(secp, internal_key, None);
-</span><span class="boring">
-</span><span class="boring">    let out_point = OutPoint {
-</span><span class="boring">        txid: Txid::all_zeros(), // Obviously invalid.
-</span><span class="boring">        vout: 0,
-</span><span class="boring">    };
-</span><span class="boring">
-</span><span class="boring">    let utxo = TxOut { value: DUMMY_UTXO_AMOUNT, script_pubkey };
-</span><span class="boring">
-</span><span class="boring">    (out_point, utxo)
-</span><span class="boring">}
-</span>
+<pre><code class="language-rust">
 fn main() {
     let secp = Secp256k1::new();
 
@@ -827,7 +745,7 @@ fn main() {
     // Sign the sighash using the secp256k1 library (exported by rust-bitcoin).
     let tweaked: TweakedKeypair = keypair.tap_tweak(&amp;secp, None);
     let msg = Message::from_digest(sighash.to_byte_array());
-    let signature = secp.sign_schnorr(&amp;msg, &amp;tweaked.to_inner());
+    let signature = secp.sign_schnorr(&amp;msg, &amp;tweaked.to_keypair());
 
     // Update the witness stack.
     let signature = bitcoin::taproot::Signature { signature, sighash_type };
@@ -1162,105 +1080,7 @@ We are using the <a href="https://docs.rs/bitcoin/0.32.0/bitcoin/blockdata/trans
 Finally, we return vector of tuples <code>(out_point, utxo)</code>.</p>
 <p>Now we are ready for our main function that will create, update, and sign a PSBT;
 while also extracting a transaction that spends the <code>p2wpkh</code>s unspent outputs:</p>
-<pre><code class="language-rust"><span class="boring">use std::collections::BTreeMap;
-</span><span class="boring">use std::str::FromStr;
-</span><span class="boring">
-</span><span class="boring">use bitcoin::bip32::{ChildNumber, Fingerprint, IntoDerivationPath as _, Xpriv, Xpub};
-</span><span class="boring">use bitcoin::hashes::Hash;
-</span><span class="boring">use bitcoin::locktime::absolute;
-</span><span class="boring">use bitcoin::secp256k1::{Secp256k1, Signing};
-</span><span class="boring">use bitcoin::{
-</span><span class="boring">    consensus, psbt, transaction, Address, Amount, EcdsaSighashType, Network, OutPoint, Psbt,
-</span><span class="boring">    ScriptBuf, Sequence, Transaction, TxIn, TxOut, Txid, WPubkeyHash, Witness,
-</span><span class="boring">};
-</span><span class="boring">
-</span><span class="boring">const XPRIV: &amp;str = "xprv9tuogRdb5YTgcL3P8Waj7REqDuQx4sXcodQaWTtEVFEp6yRKh1CjrWfXChnhgHeLDuXxo2auDZegMiVMGGxwxcrb2PmiGyCngLxvLeGsZRq";
-</span><span class="boring">const BIP84_DERIVATION_PATH: &amp;str = "m/84'/0'/0'";
-</span><span class="boring">const MASTER_FINGERPRINT: &amp;str = "9680603f";
-</span><span class="boring">const DUMMY_UTXO_AMOUNT_INPUT_1: Amount = Amount::from_sat(20_000_000);
-</span><span class="boring">const DUMMY_UTXO_AMOUNT_INPUT_2: Amount = Amount::from_sat(10_000_000);
-</span><span class="boring">const SPEND_AMOUNT: Amount = Amount::from_sat(25_000_000);
-</span><span class="boring">const CHANGE_AMOUNT: Amount = Amount::from_sat(4_990_000); // 10_000 sat fee.
-</span><span class="boring">
-</span><span class="boring">fn get_external_address_xpriv&lt;C: Signing&gt;(
-</span><span class="boring">    secp: &amp;Secp256k1&lt;C&gt;,
-</span><span class="boring">    master_xpriv: Xpriv,
-</span><span class="boring">    index: u32,
-</span><span class="boring">) -&gt; Xpriv {
-</span><span class="boring">    let derivation_path =
-</span><span class="boring">        BIP84_DERIVATION_PATH.into_derivation_path().expect("valid derivation path");
-</span><span class="boring">    let child_xpriv = master_xpriv
-</span><span class="boring">        .derive_priv(secp, &amp;derivation_path)
-</span><span class="boring">        .expect("valid child xpriv");
-</span><span class="boring">    let external_index = ChildNumber::from_normal_idx(0).unwrap();
-</span><span class="boring">    let idx = ChildNumber::from_normal_idx(index).expect("valid index number");
-</span><span class="boring">
-</span><span class="boring">    child_xpriv
-</span><span class="boring">        .derive_priv(secp, &amp;[external_index, idx])
-</span><span class="boring">        .expect("valid xpriv")
-</span><span class="boring">}
-</span><span class="boring">
-</span><span class="boring">fn get_internal_address_xpriv&lt;C: Signing&gt;(
-</span><span class="boring">    secp: &amp;Secp256k1&lt;C&gt;,
-</span><span class="boring">    master_xpriv: Xpriv,
-</span><span class="boring">    index: u32,
-</span><span class="boring">) -&gt; Xpriv {
-</span><span class="boring">    let derivation_path =
-</span><span class="boring">        BIP84_DERIVATION_PATH.into_derivation_path().expect("valid derivation path");
-</span><span class="boring">    let child_xpriv = master_xpriv
-</span><span class="boring">        .derive_priv(secp, &amp;derivation_path)
-</span><span class="boring">        .expect("valid child xpriv");
-</span><span class="boring">    let internal_index = ChildNumber::from_normal_idx(1).unwrap();
-</span><span class="boring">    let idx = ChildNumber::from_normal_idx(index).expect("valid index number");
-</span><span class="boring">
-</span><span class="boring">    child_xpriv
-</span><span class="boring">        .derive_priv(secp, &amp;[internal_index, idx])
-</span><span class="boring">        .expect("valid xpriv")
-</span><span class="boring">}
-</span><span class="boring">
-</span><span class="boring">fn receivers_address() -&gt; Address {
-</span><span class="boring">    Address::from_str("bc1q7cyrfmck2ffu2ud3rn5l5a8yv6f0chkp0zpemf")
-</span><span class="boring">        .expect("a valid address")
-</span><span class="boring">        .require_network(Network::Bitcoin)
-</span><span class="boring">        .expect("valid address for mainnet")
-</span><span class="boring">}
-</span><span class="boring">
-</span><span class="boring">fn dummy_unspent_transaction_outputs() -&gt; Vec&lt;(OutPoint, TxOut)&gt; {
-</span><span class="boring">    let script_pubkey_1 = Address::from_str("bc1qrwuu3ydv0jfza4a0ehtfd03m9l4vw3fy0hfm50")
-</span><span class="boring">        .expect("a valid address")
-</span><span class="boring">        .require_network(Network::Bitcoin)
-</span><span class="boring">        .expect("valid address for mainnet")
-</span><span class="boring">        .script_pubkey();
-</span><span class="boring">
-</span><span class="boring">    let out_point_1 = OutPoint {
-</span><span class="boring">        txid: Txid::all_zeros(), // Obviously invalid.
-</span><span class="boring">        vout: 0,
-</span><span class="boring">    };
-</span><span class="boring">
-</span><span class="boring">    let utxo_1 = TxOut {
-</span><span class="boring">        value: DUMMY_UTXO_AMOUNT_INPUT_1,
-</span><span class="boring">        script_pubkey: script_pubkey_1,
-</span><span class="boring">    };
-</span><span class="boring">
-</span><span class="boring">    let script_pubkey_2 = Address::from_str("bc1qy7swwpejlw7a2rp774pa8rymh8tw3xvd2x2xkd")
-</span><span class="boring">        .expect("a valid address")
-</span><span class="boring">        .require_network(Network::Bitcoin)
-</span><span class="boring">        .expect("valid address for mainnet")
-</span><span class="boring">        .script_pubkey();
-</span><span class="boring">
-</span><span class="boring">    let out_point_2 = OutPoint {
-</span><span class="boring">        txid: Txid::all_zeros(), // Obviously invalid.
-</span><span class="boring">        vout: 1,
-</span><span class="boring">    };
-</span><span class="boring">
-</span><span class="boring">    let utxo_2 = TxOut {
-</span><span class="boring">        value: DUMMY_UTXO_AMOUNT_INPUT_2,
-</span><span class="boring">        script_pubkey: script_pubkey_2,
-</span><span class="boring">    };
-</span><span class="boring">    vec![(out_point_1, utxo_1), (out_point_2, utxo_2)]
-</span><span class="boring">}
-</span><span class="boring">
-</span>fn main() {
+<pre><code class="language-rust">fn main() {
     let secp = Secp256k1::new();
 
     // Get the individual xprivs we control. In a real application these would come from a stored secret.
@@ -1706,119 +1526,7 @@ We are using the <a href="https://docs.rs/bitcoin/0.32.0/bitcoin/blockdata/trans
 Finally, we return vector of tuples <code>(out_point, utxo)</code>.</p>
 <p>Now we are ready for our main function that will create, update, and sign a PSBT;
 while also extracting a transaction that spends the <code>p2tr</code>s unspent outputs:</p>
-<pre><code class="language-rust"><span class="boring">use std::collections::BTreeMap;
-</span><span class="boring">use std::str::FromStr;
-</span><span class="boring">
-</span><span class="boring">use bitcoin::bip32::{ChildNumber, IntoDerivationPath, DerivationPath, Fingerprint, Xpriv, Xpub};
-</span><span class="boring">use bitcoin::hashes::Hash;
-</span><span class="boring">use bitcoin::key::UntweakedPublicKey;
-</span><span class="boring">use bitcoin::locktime::absolute;
-</span><span class="boring">use bitcoin::psbt::Input;
-</span><span class="boring">use bitcoin::secp256k1::{Secp256k1, Signing};
-</span><span class="boring">use bitcoin::{
-</span><span class="boring">    consensus, transaction, Address, Amount, Network, OutPoint, Psbt, ScriptBuf, Sequence,
-</span><span class="boring">    TapLeafHash, TapSighashType, Transaction, TxIn, TxOut, Txid, Witness, XOnlyPublicKey,
-</span><span class="boring">};
-</span><span class="boring">
-</span><span class="boring">const XPRIV: &amp;str = "xprv9tuogRdb5YTgcL3P8Waj7REqDuQx4sXcodQaWTtEVFEp6yRKh1CjrWfXChnhgHeLDuXxo2auDZegMiVMGGxwxcrb2PmiGyCngLxvLeGsZRq";
-</span><span class="boring">const BIP86_DERIVATION_PATH: &amp;str = "m/86'/0'/0'";
-</span><span class="boring">const MASTER_FINGERPRINT: &amp;str = "9680603f";
-</span><span class="boring">const DUMMY_UTXO_AMOUNT_INPUT_1: Amount = Amount::from_sat(20_000_000);
-</span><span class="boring">const DUMMY_UTXO_AMOUNT_INPUT_2: Amount = Amount::from_sat(10_000_000);
-</span><span class="boring">const SPEND_AMOUNT: Amount = Amount::from_sat(25_000_000);
-</span><span class="boring">const CHANGE_AMOUNT: Amount = Amount::from_sat(4_990_000); // 10_000 sat fee.
-</span><span class="boring">
-</span><span class="boring">fn get_external_address_xpriv&lt;C: Signing&gt;(
-</span><span class="boring">    secp: &amp;Secp256k1&lt;C&gt;,
-</span><span class="boring">    master_xpriv: Xpriv,
-</span><span class="boring">    index: u32,
-</span><span class="boring">) -&gt; Xpriv {
-</span><span class="boring">    let derivation_path =
-</span><span class="boring">       BIP86_DERIVATION_PATH.into_derivation_path().expect("valid derivation path");
-</span><span class="boring">    let child_xpriv = master_xpriv
-</span><span class="boring">        .derive_priv(secp, &amp;derivation_path)
-</span><span class="boring">        .expect("valid child xpriv");
-</span><span class="boring">    let external_index = ChildNumber::from_normal_idx(0).unwrap();
-</span><span class="boring">    let idx = ChildNumber::from_normal_idx(index).expect("valid index number");
-</span><span class="boring">
-</span><span class="boring">    child_xpriv
-</span><span class="boring">        .derive_priv(secp, &amp;[external_index, idx])
-</span><span class="boring">        .expect("valid xpriv")
-</span><span class="boring">}
-</span><span class="boring">
-</span><span class="boring">fn get_internal_address_xpriv&lt;C: Signing&gt;(
-</span><span class="boring">    secp: &amp;Secp256k1&lt;C&gt;,
-</span><span class="boring">    master_xpriv: Xpriv,
-</span><span class="boring">    index: u32,
-</span><span class="boring">) -&gt; Xpriv {
-</span><span class="boring">    let derivation_path =
-</span><span class="boring">       BIP86_DERIVATION_PATH.into_derivation_path().expect("valid derivation path");
-</span><span class="boring">    let child_xpriv = master_xpriv
-</span><span class="boring">        .derive_priv(secp, &amp;derivation_path)
-</span><span class="boring">        .expect("valid child xpriv");
-</span><span class="boring">    let internal_index = ChildNumber::from_normal_idx(1).unwrap();
-</span><span class="boring">    let idx = ChildNumber::from_normal_idx(index).expect("valid index number");
-</span><span class="boring">
-</span><span class="boring">    child_xpriv
-</span><span class="boring">        .derive_priv(secp, &amp;[internal_index, idx])
-</span><span class="boring">        .expect("valid xpriv")
-</span><span class="boring">}
-</span><span class="boring">
-</span><span class="boring">fn get_tap_key_origin(
-</span><span class="boring">    x_only_key: UntweakedPublicKey,
-</span><span class="boring">    master_fingerprint: Fingerprint,
-</span><span class="boring">    path: DerivationPath,
-</span><span class="boring">) -&gt; BTreeMap&lt;XOnlyPublicKey, (Vec&lt;TapLeafHash&gt;, (Fingerprint, DerivationPath))&gt; {
-</span><span class="boring">    let mut map = BTreeMap::new();
-</span><span class="boring">    map.insert(x_only_key, (vec![], (master_fingerprint, path)));
-</span><span class="boring">    map
-</span><span class="boring">}
-</span><span class="boring">
-</span><span class="boring">fn receivers_address() -&gt; Address {
-</span><span class="boring">    Address::from_str("bc1p0dq0tzg2r780hldthn5mrznmpxsxc0jux5f20fwj0z3wqxxk6fpqm7q0va")
-</span><span class="boring">        .expect("a valid address")
-</span><span class="boring">        .require_network(Network::Bitcoin)
-</span><span class="boring">        .expect("valid address for mainnet")
-</span><span class="boring">}
-</span><span class="boring">
-</span><span class="boring">fn dummy_unspent_transaction_outputs() -&gt; Vec&lt;(OutPoint, TxOut)&gt; {
-</span><span class="boring">    let script_pubkey_1 =
-</span><span class="boring">        Address::from_str("bc1p80lanj0xee8q667aqcnn0xchlykllfsz3gu5skfv9vjsytaujmdqtv52vu")
-</span><span class="boring">            .unwrap()
-</span><span class="boring">            .require_network(Network::Bitcoin)
-</span><span class="boring">            .unwrap()
-</span><span class="boring">            .script_pubkey();
-</span><span class="boring">
-</span><span class="boring">    let out_point_1 = OutPoint {
-</span><span class="boring">        txid: Txid::all_zeros(), // Obviously invalid.
-</span><span class="boring">        vout: 0,
-</span><span class="boring">    };
-</span><span class="boring">
-</span><span class="boring">    let utxo_1 = TxOut {
-</span><span class="boring">        value: DUMMY_UTXO_AMOUNT_INPUT_1,
-</span><span class="boring">        script_pubkey: script_pubkey_1,
-</span><span class="boring">    };
-</span><span class="boring">
-</span><span class="boring">    let script_pubkey_2 =
-</span><span class="boring">        Address::from_str("bc1pfd0jmmdnp278vppcw68tkkmquxtq50xchy7f6wdmjtjm7fgsr8dszdcqce")
-</span><span class="boring">            .unwrap()
-</span><span class="boring">            .require_network(Network::Bitcoin)
-</span><span class="boring">            .unwrap()
-</span><span class="boring">            .script_pubkey();
-</span><span class="boring">
-</span><span class="boring">    let out_point_2 = OutPoint {
-</span><span class="boring">        txid: Txid::all_zeros(), // Obviously invalid.
-</span><span class="boring">        vout: 1,
-</span><span class="boring">    };
-</span><span class="boring">
-</span><span class="boring">    let utxo_2 = TxOut {
-</span><span class="boring">        value: DUMMY_UTXO_AMOUNT_INPUT_2,
-</span><span class="boring">        script_pubkey: script_pubkey_2,
-</span><span class="boring">    };
-</span><span class="boring">    vec![(out_point_1, utxo_1), (out_point_2, utxo_2)]
-</span><span class="boring">}
-</span><span class="boring">
-</span>fn main() {
+<pre><code class="language-rust">fn main() {
     let secp = Secp256k1::new();
 
     // Get the individual xprivs we control. In a real application these would come from a stored secret.
@@ -2081,6 +1789,15 @@ the <code>internal_key</code> public key hash that we generated earlier. <a href
 <p>Coinbase TX 7a1…e3f</p>
 </span></div>
 </foreignobject></g></g></g><g class="edgePaths"></g><g class="edgeLabels"></g><g class="nodes"><g class="node default" id="flowchart-C-0" transform="translate(124.87109375, 69)"><rect class="basic label-container" style="" x="-81.87109375" y="-23.5" width="163.7421875" height="47"></rect><g class="label" style="" transform="translate(0, -8.5)"><rect></rect><g><rect class="background" style="stroke: none"></rect><text y="-10.1" style=""><tspan class="text-outer-tspan" x="0" y="-0.1em" dy="1.1em"><tspan font-style="normal" class="text-inner-tspan" font-weight="normal">coinbase</tspan><tspan font-style="normal" class="text-inner-tspan" font-weight="normal"> input</tspan></tspan></text></g></g></g></g></g><g class="node default" id="flowchart-U0-1" transform="translate(362.1015625, 141.845703125)"><circle class="basic label-container" style="fill:#ffffff !important;stroke:#777 !important;stroke-width:2px !important;stroke-dasharray:6 4 !important" r="45.359375" cx="0" cy="0"></circle><g class="label" style="color:#555 !important" transform="translate(0, -17.299999237060547)"><rect></rect><g><rect class="background" style="stroke: none"></rect><text y="-10.1" style="fill:#555 !important"><tspan class="text-outer-tspan" x="0" y="-0.1em" dy="1.1em"><tspan font-style="normal" class="text-inner-tspan" font-weight="normal">7a1…e3f:0</tspan></tspan><tspan class="text-outer-tspan" x="0" y="1em" dy="1.1em"><tspan font-style="normal" class="text-inner-tspan" font-weight="normal">50</tspan><tspan font-style="normal" class="text-inner-tspan" font-weight="normal"> BTC</tspan></tspan></text></g></g></g><g class="node default" id="flowchart-U1-2" transform="translate(532.65625, 68.1796875)"><circle class="basic label-container" style="fill:#eef9ee !important;stroke:#2f7d32 !important;stroke-width:2px !important" r="47.13671875" cx="0" cy="0"></circle><g class="label" style="color:#1f3a22 !important" transform="translate(0, -17.299999237060547)"><rect></rect><g><rect class="background" style="stroke: none"></rect><text y="-10.1" style="fill:#1f3a22 !important"><tspan class="text-outer-tspan" x="0" y="-0.1em" dy="1.1em"><tspan font-style="normal" class="text-inner-tspan" font-weight="normal">3bc…91a:0</tspan></tspan><tspan class="text-outer-tspan" x="0" y="1em" dy="1.1em"><tspan font-style="normal" class="text-inner-tspan" font-weight="normal">30</tspan><tspan font-style="normal" class="text-inner-tspan" font-weight="normal"> BTC</tspan></tspan></text></g></g></g><g class="node default" id="flowchart-U2-3" transform="translate(532.65625, 215.51171875)"><circle class="basic label-container" style="fill:#eef9ee !important;stroke:#2f7d32 !important;stroke-width:2px !important" r="50.1953125" cx="0" cy="0"></circle><g class="label" style="color:#1f3a22 !important" transform="translate(0, -17.299999237060547)"><rect></rect><g><rect class="background" style="stroke: none"></rect><text y="-10.1" style="fill:#1f3a22 !important"><tspan class="text-outer-tspan" x="0" y="-0.1em" dy="1.1em"><tspan font-style="normal" class="text-inner-tspan" font-weight="normal">3bc…91a:1</tspan></tspan><tspan class="text-outer-tspan" x="0" y="1em" dy="1.1em"><tspan font-style="normal" class="text-inner-tspan" font-weight="normal">19.999</tspan><tspan font-style="normal" class="text-inner-tspan" font-weight="normal"> BTC</tspan></tspan></text></g></g></g></g></g></g></svg></p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="runnable-demo"><a class="header" href="#runnable-demo">Runnable Demo</a></h1>
+<p>This page demonstrates the runnable example pipeline.</p>
+<p>Click the run button to reveal the precomputed output.</p>
+<pre><code class="language-rust">use bitcoin::Network;
+
+fn main() {
+    println!("{:?}", Network::Bitcoin);
+}</code></pre>
 
                     </main>
 
@@ -2121,6 +1838,7 @@ the <code>internal_key</code> public key hash that we generated earlier. <a href
         <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="runnable_examples-e64c79f4.js"></script>
 
         <script>
         window.addEventListener('load', function() {

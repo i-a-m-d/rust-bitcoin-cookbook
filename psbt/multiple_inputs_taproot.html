@@ -30,6 +30,7 @@
         <!-- Custom theme stylesheets -->
         <link rel="stylesheet" href="../mermaid-ssr-fixes-cad0f612.css">
         <link rel="stylesheet" href="../sidebar-886cee35.css">
+        <link rel="stylesheet" href="../runnable_examples-db487800.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -37,10 +38,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-bffec089.js";
+            window.path_to_searchindex_js = "../searchindex-30e1fff5.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-70c1a335.js"></script>
+        <script src="../toc-2892cf0b.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -375,119 +376,7 @@ We are using the <a href="https://docs.rs/bitcoin/0.32.0/bitcoin/blockdata/trans
 Finally, we return vector of tuples <code>(out_point, utxo)</code>.</p>
 <p>Now we are ready for our main function that will create, update, and sign a PSBT;
 while also extracting a transaction that spends the <code>p2tr</code>s unspent outputs:</p>
-<pre><code class="language-rust"><span class="boring">use std::collections::BTreeMap;
-</span><span class="boring">use std::str::FromStr;
-</span><span class="boring">
-</span><span class="boring">use bitcoin::bip32::{ChildNumber, IntoDerivationPath, DerivationPath, Fingerprint, Xpriv, Xpub};
-</span><span class="boring">use bitcoin::hashes::Hash;
-</span><span class="boring">use bitcoin::key::UntweakedPublicKey;
-</span><span class="boring">use bitcoin::locktime::absolute;
-</span><span class="boring">use bitcoin::psbt::Input;
-</span><span class="boring">use bitcoin::secp256k1::{Secp256k1, Signing};
-</span><span class="boring">use bitcoin::{
-</span><span class="boring">    consensus, transaction, Address, Amount, Network, OutPoint, Psbt, ScriptBuf, Sequence,
-</span><span class="boring">    TapLeafHash, TapSighashType, Transaction, TxIn, TxOut, Txid, Witness, XOnlyPublicKey,
-</span><span class="boring">};
-</span><span class="boring">
-</span><span class="boring">const XPRIV: &amp;str = "xprv9tuogRdb5YTgcL3P8Waj7REqDuQx4sXcodQaWTtEVFEp6yRKh1CjrWfXChnhgHeLDuXxo2auDZegMiVMGGxwxcrb2PmiGyCngLxvLeGsZRq";
-</span><span class="boring">const BIP86_DERIVATION_PATH: &amp;str = "m/86'/0'/0'";
-</span><span class="boring">const MASTER_FINGERPRINT: &amp;str = "9680603f";
-</span><span class="boring">const DUMMY_UTXO_AMOUNT_INPUT_1: Amount = Amount::from_sat(20_000_000);
-</span><span class="boring">const DUMMY_UTXO_AMOUNT_INPUT_2: Amount = Amount::from_sat(10_000_000);
-</span><span class="boring">const SPEND_AMOUNT: Amount = Amount::from_sat(25_000_000);
-</span><span class="boring">const CHANGE_AMOUNT: Amount = Amount::from_sat(4_990_000); // 10_000 sat fee.
-</span><span class="boring">
-</span><span class="boring">fn get_external_address_xpriv&lt;C: Signing&gt;(
-</span><span class="boring">    secp: &amp;Secp256k1&lt;C&gt;,
-</span><span class="boring">    master_xpriv: Xpriv,
-</span><span class="boring">    index: u32,
-</span><span class="boring">) -&gt; Xpriv {
-</span><span class="boring">    let derivation_path =
-</span><span class="boring">       BIP86_DERIVATION_PATH.into_derivation_path().expect("valid derivation path");
-</span><span class="boring">    let child_xpriv = master_xpriv
-</span><span class="boring">        .derive_priv(secp, &amp;derivation_path)
-</span><span class="boring">        .expect("valid child xpriv");
-</span><span class="boring">    let external_index = ChildNumber::from_normal_idx(0).unwrap();
-</span><span class="boring">    let idx = ChildNumber::from_normal_idx(index).expect("valid index number");
-</span><span class="boring">
-</span><span class="boring">    child_xpriv
-</span><span class="boring">        .derive_priv(secp, &amp;[external_index, idx])
-</span><span class="boring">        .expect("valid xpriv")
-</span><span class="boring">}
-</span><span class="boring">
-</span><span class="boring">fn get_internal_address_xpriv&lt;C: Signing&gt;(
-</span><span class="boring">    secp: &amp;Secp256k1&lt;C&gt;,
-</span><span class="boring">    master_xpriv: Xpriv,
-</span><span class="boring">    index: u32,
-</span><span class="boring">) -&gt; Xpriv {
-</span><span class="boring">    let derivation_path =
-</span><span class="boring">       BIP86_DERIVATION_PATH.into_derivation_path().expect("valid derivation path");
-</span><span class="boring">    let child_xpriv = master_xpriv
-</span><span class="boring">        .derive_priv(secp, &amp;derivation_path)
-</span><span class="boring">        .expect("valid child xpriv");
-</span><span class="boring">    let internal_index = ChildNumber::from_normal_idx(1).unwrap();
-</span><span class="boring">    let idx = ChildNumber::from_normal_idx(index).expect("valid index number");
-</span><span class="boring">
-</span><span class="boring">    child_xpriv
-</span><span class="boring">        .derive_priv(secp, &amp;[internal_index, idx])
-</span><span class="boring">        .expect("valid xpriv")
-</span><span class="boring">}
-</span><span class="boring">
-</span><span class="boring">fn get_tap_key_origin(
-</span><span class="boring">    x_only_key: UntweakedPublicKey,
-</span><span class="boring">    master_fingerprint: Fingerprint,
-</span><span class="boring">    path: DerivationPath,
-</span><span class="boring">) -&gt; BTreeMap&lt;XOnlyPublicKey, (Vec&lt;TapLeafHash&gt;, (Fingerprint, DerivationPath))&gt; {
-</span><span class="boring">    let mut map = BTreeMap::new();
-</span><span class="boring">    map.insert(x_only_key, (vec![], (master_fingerprint, path)));
-</span><span class="boring">    map
-</span><span class="boring">}
-</span><span class="boring">
-</span><span class="boring">fn receivers_address() -&gt; Address {
-</span><span class="boring">    Address::from_str("bc1p0dq0tzg2r780hldthn5mrznmpxsxc0jux5f20fwj0z3wqxxk6fpqm7q0va")
-</span><span class="boring">        .expect("a valid address")
-</span><span class="boring">        .require_network(Network::Bitcoin)
-</span><span class="boring">        .expect("valid address for mainnet")
-</span><span class="boring">}
-</span><span class="boring">
-</span><span class="boring">fn dummy_unspent_transaction_outputs() -&gt; Vec&lt;(OutPoint, TxOut)&gt; {
-</span><span class="boring">    let script_pubkey_1 =
-</span><span class="boring">        Address::from_str("bc1p80lanj0xee8q667aqcnn0xchlykllfsz3gu5skfv9vjsytaujmdqtv52vu")
-</span><span class="boring">            .unwrap()
-</span><span class="boring">            .require_network(Network::Bitcoin)
-</span><span class="boring">            .unwrap()
-</span><span class="boring">            .script_pubkey();
-</span><span class="boring">
-</span><span class="boring">    let out_point_1 = OutPoint {
-</span><span class="boring">        txid: Txid::all_zeros(), // Obviously invalid.
-</span><span class="boring">        vout: 0,
-</span><span class="boring">    };
-</span><span class="boring">
-</span><span class="boring">    let utxo_1 = TxOut {
-</span><span class="boring">        value: DUMMY_UTXO_AMOUNT_INPUT_1,
-</span><span class="boring">        script_pubkey: script_pubkey_1,
-</span><span class="boring">    };
-</span><span class="boring">
-</span><span class="boring">    let script_pubkey_2 =
-</span><span class="boring">        Address::from_str("bc1pfd0jmmdnp278vppcw68tkkmquxtq50xchy7f6wdmjtjm7fgsr8dszdcqce")
-</span><span class="boring">            .unwrap()
-</span><span class="boring">            .require_network(Network::Bitcoin)
-</span><span class="boring">            .unwrap()
-</span><span class="boring">            .script_pubkey();
-</span><span class="boring">
-</span><span class="boring">    let out_point_2 = OutPoint {
-</span><span class="boring">        txid: Txid::all_zeros(), // Obviously invalid.
-</span><span class="boring">        vout: 1,
-</span><span class="boring">    };
-</span><span class="boring">
-</span><span class="boring">    let utxo_2 = TxOut {
-</span><span class="boring">        value: DUMMY_UTXO_AMOUNT_INPUT_2,
-</span><span class="boring">        script_pubkey: script_pubkey_2,
-</span><span class="boring">    };
-</span><span class="boring">    vec![(out_point_1, utxo_1), (out_point_2, utxo_2)]
-</span><span class="boring">}
-</span><span class="boring">
-</span>fn main() {
+<pre><code class="language-rust">fn main() {
     let secp = Secp256k1::new();
 
     // Get the individual xprivs we control. In a real application these would come from a stored secret.
@@ -783,6 +672,7 @@ the <code>internal_key</code> public key hash that we generated earlier. <a href
         <script src="../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="../runnable_examples-e64c79f4.js"></script>
 
 
 

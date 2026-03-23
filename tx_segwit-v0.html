@@ -30,6 +30,7 @@
         <!-- Custom theme stylesheets -->
         <link rel="stylesheet" href="mermaid-ssr-fixes-cad0f612.css">
         <link rel="stylesheet" href="sidebar-886cee35.css">
+        <link rel="stylesheet" href="runnable_examples-db487800.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -37,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-bffec089.js";
+            window.path_to_searchindex_js = "searchindex-30e1fff5.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-70c1a335.js"></script>
+        <script src="toc-2892cf0b.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -267,50 +268,7 @@ and a value of the <code>const DUMMY_UTXO_AMOUNT</code> that we defined earlier.
 We are using the <a href="https://docs.rs/bitcoin/0.32.0/bitcoin/blockdata/transaction/struct.OutPoint.html"><code>OutPoint</code></a> struct to represent the transaction output.
 Finally, we return the tuple <code>(out_point, utxo)</code>.</p>
 <p>Now we are ready for our main function that will sign a transaction that spends a <code>p2wpkh</code> unspent output:</p>
-<pre><code class="language-rust"><span class="boring">use std::str::FromStr;
-</span><span class="boring">
-</span><span class="boring">use bitcoin::hashes::Hash;
-</span><span class="boring">use bitcoin::locktime::absolute;
-</span><span class="boring">use bitcoin::secp256k1::{rand, Message, Secp256k1, SecretKey, Signing};
-</span><span class="boring">use bitcoin::sighash::{EcdsaSighashType, SighashCache};
-</span><span class="boring">use bitcoin::{
-</span><span class="boring">    transaction, Address, Amount, Network, OutPoint, ScriptBuf, Sequence, Transaction, TxIn, TxOut,
-</span><span class="boring">    Txid, WPubkeyHash, Witness,
-</span><span class="boring">};
-</span><span class="boring">
-</span><span class="boring">const DUMMY_UTXO_AMOUNT: Amount = Amount::from_sat(20_000_000);
-</span><span class="boring">const SPEND_AMOUNT: Amount = Amount::from_sat(5_000_000);
-</span><span class="boring">const CHANGE_AMOUNT: Amount = Amount::from_sat(14_999_000); // 1000 sat fee.
-</span><span class="boring">
-</span><span class="boring">fn senders_keys&lt;C: Signing&gt;(secp: &amp;Secp256k1&lt;C&gt;) -&gt; (SecretKey, WPubkeyHash) {
-</span><span class="boring">    let sk = SecretKey::new(&amp;mut rand::thread_rng());
-</span><span class="boring">    let pk = bitcoin::PublicKey::new(sk.public_key(secp));
-</span><span class="boring">    let wpkh = pk.wpubkey_hash().expect("key is compressed");
-</span><span class="boring">
-</span><span class="boring">    (sk, wpkh)
-</span><span class="boring">}
-</span><span class="boring">
-</span><span class="boring">
-</span><span class="boring">fn receivers_address() -&gt; Address {
-</span><span class="boring">    Address::from_str("bc1q7cyrfmck2ffu2ud3rn5l5a8yv6f0chkp0zpemf")
-</span><span class="boring">        .expect("a valid address")
-</span><span class="boring">        .require_network(Network::Bitcoin)
-</span><span class="boring">        .expect("valid address for mainnet")
-</span><span class="boring">}
-</span><span class="boring">
-</span><span class="boring">fn dummy_unspent_transaction_output(wpkh: &amp;WPubkeyHash) -&gt; (OutPoint, TxOut) {
-</span><span class="boring">    let script_pubkey = ScriptBuf::new_p2wpkh(wpkh);
-</span><span class="boring">
-</span><span class="boring">    let out_point = OutPoint {
-</span><span class="boring">       txid: Txid::all_zeros(), // Obviously invalid.
-</span><span class="boring">       vout: 0,
-</span><span class="boring">    };
-</span><span class="boring">
-</span><span class="boring">    let utxo = TxOut { value: DUMMY_UTXO_AMOUNT, script_pubkey };
-</span><span class="boring">
-</span><span class="boring">    (out_point, utxo)
-</span><span class="boring">}
-</span>
+<pre><code class="language-rust">
 fn main() {
     let secp = Secp256k1::new();
 
@@ -546,6 +504,7 @@ library implementing various cryptographic functions using the <a href="https://
         <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="runnable_examples-e64c79f4.js"></script>
 
 
 
