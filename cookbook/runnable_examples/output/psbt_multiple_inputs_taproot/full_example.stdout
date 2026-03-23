@@ -1,0 +1,51 @@
+Transaction Details: Transaction {
+    version: Version(
+        2,
+    ),
+    lock_time: 0 blocks,
+    input: [
+        TxIn {
+            previous_output: OutPoint {
+                txid: 0000000000000000000000000000000000000000000000000000000000000000,
+                vout: 0,
+            },
+            script_sig: Script(),
+            sequence: Sequence(0xfffffffd),
+            witness: Witness: {
+                indices: 1,
+                indices_start: 66,
+                witnesses: [
+                    [0xe3, 0x72, 0x1d, 0x52, 0xe7, 0x58, 0x88, 0x24, 0xe7, 0x0a, 0x3f, 0x39, 0x12, 0xd4, 0x7e, 0xa6, 0x5c, 0x93, 0x26, 0x5e, 0x86, 0x70, 0xff, 0xd4, 0x9b, 0x90, 0x01, 0x10, 0xe9, 0x43, 0x13, 0xc4, 0xb8, 0x3d, 0xbd, 0x56, 0x9d, 0xe6, 0xf3, 0x35, 0x47, 0xc8, 0x8b, 0xe7, 0x84, 0x8e, 0xfe, 0xa7, 0x07, 0x96, 0x80, 0xad, 0x06, 0x04, 0xe9, 0x65, 0x32, 0xf2, 0x7c, 0x8e, 0x76, 0x84, 0xa6, 0xc2, 0x01],
+                ],
+            }
+            ,
+        },
+        TxIn {
+            previous_output: OutPoint {
+                txid: 0000000000000000000000000000000000000000000000000000000000000000,
+                vout: 1,
+            },
+            script_sig: Script(),
+            sequence: Sequence(0xfffffffd),
+            witness: Witness: {
+                indices: 1,
+                indices_start: 66,
+                witnesses: [
+                    [0xf7, 0x3e, 0xe7, 0x19, 0xef, 0xf0, 0xfd, 0xb0, 0xe7, 0xf9, 0xf0, 0xf0, 0x9b, 0xde, 0xd0, 0x3e, 0xb6, 0x59, 0x79, 0x7f, 0xf1, 0xbb, 0x66, 0xf4, 0x80, 0x7c, 0x81, 0x2c, 0x07, 0xd1, 0xf9, 0xc1, 0x60, 0xac, 0x90, 0x13, 0x17, 0x85, 0x08, 0x1a, 0x4e, 0x59, 0x80, 0xb6, 0x16, 0xe4, 0xfd, 0x03, 0xd6, 0x7d, 0xff, 0xac, 0xf5, 0x7c, 0xd6, 0xed, 0xcf, 0x5e, 0xc3, 0x08, 0x8c, 0x0b, 0xfd, 0xbe, 0x01],
+                ],
+            }
+            ,
+        },
+    ],
+    output: [
+        TxOut {
+            value: 25000000 SAT,
+            script_pubkey: Script(OP_PUSHNUM_1 OP_PUSHBYTES_32 7b40f5890a1f8efbfdabbce9b18a7b09a06c3e5c3512a7a5d278a2e018d6d242),
+        },
+        TxOut {
+            value: 4990000 SAT,
+            script_pubkey: Script(OP_PUSHNUM_1 OP_PUSHBYTES_32 0b46066a4e883852d96b61f1c621fd69dbaf9c59236cfaade7daf8eac5304d57),
+        },
+    ],
+}
+Raw Transaction: 0200000000010200000000000000000000000000000000000000000000000000000000000000000000000000fdffffff00000000000000000000000000000000000000000000000000000000000000000100000000fdffffff0240787d01000000002251207b40f5890a1f8efbfdabbce9b18a7b09a06c3e5c3512a7a5d278a2e018d6d24230244c00000000002251200b46066a4e883852d96b61f1c621fd69dbaf9c59236cfaade7daf8eac5304d570141e3721d52e7588824e70a3f3912d47ea65c93265e8670ffd49b900110e94313c4b83dbd569de6f33547c88be7848efea7079680ad0604e96532f27c8e7684a6c2010141f73ee719eff0fdb0e7f9f0f09bded03eb659797ff1bb66f4807c812c07d1f9c160ac90131785081a4e5980b616e4fd03d67dffacf57cd6edcf5ec3088c0bfdbe0100000000

@@ -80,27 +80,15 @@ A fun first program is one that generates a brand new testnet keypair and prints
 
 Replace the default contents of `src/main.rs` with:
 
-```rust
-use bitcoin::key::Secp256k1;
-use bitcoin::{Address, Network, PrivateKey};
-
-fn main() {
-    let secp = Secp256k1::new();
-    let private_key = PrivateKey::generate(Network::Testnet);
-    let public_key = private_key.public_key(&secp);
-    let address =
-        Address::p2wpkh(&public_key.try_into().expect("compressed key"), Network::Testnet);
-
-    println!("private key (WIF): {}", private_key.to_wif());
-    println!("testnet address: {}", address);
-}
-```
+{{#runnable runnable_examples/examples/getting_started/first_tiny_program.rs mode=nondeterministic}}
 
 Then run it:
 
 ```bash
 cargo run
 ```
+
+If you use the run button in this book, it will reveal one of several captured sample outputs. Because this example uses randomness, your own locally generated key and address will differ.
 
 This gives you a quick success case built around three important ideas:
 

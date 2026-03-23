@@ -13,12 +13,23 @@ description = "A cookbook for Rust Bitcoin development"
 edition = "2021"
 
 [output.html]
-additional-css = ["mermaid-ssr-fixes.css", "sidebar.css"]
+additional-css = ["mermaid-ssr-fixes.css", "sidebar.css", "runnable_examples.css"]
+additional-js = ["runnable_examples.js"]
 
 [output.html.playground]
 runnable = false # playground is not runnable by default
 
 [preprocessor]
+
+[preprocessor.runnable-examples]
+command = "./mdbook-runnable-examples.sh"
+enabled = false
+examples-dir = "runnable_examples/examples"
+output-dir = "runnable_examples/output"
+manifest-path = "runnable_examples/Cargo.toml"
+target-dir = "/tmp/rust-bitcoin-cookbook-runnable-target"
+fake-running-ms = 180
+nondeterministic-sample-count = 10
 
 [preprocessor.mermaid-ssr]
 html-labels = false
