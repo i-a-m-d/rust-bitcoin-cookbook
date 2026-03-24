@@ -39,7 +39,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-5ed29318.js";
+            window.path_to_searchindex_js = "searchindex-a90c98d3.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-34d8fa6a.js"></script>
@@ -195,6 +195,35 @@
 <li><code>Network::Regtest</code></li>
 </ul>
 <p>This section gives some practical examples of how and where to use the <code>Network</code> type.</p>
+<h2 id="generate-a-p2wpkh-address-on-different-networks"><a class="header" href="#generate-a-p2wpkh-address-on-different-networks">Generate a P2WPKH address on different networks</a></h2>
+<p>A concrete use case of the <code>Network</code> type is during address construction. Different prefixes are used for different networks, leading to different address strings. For P2WPKH address for exampole, this results in the address starting with:</p>
+<ul>
+<li><code>bc1</code> on <code>Bitcoin</code></li>
+<li><code>tb1</code> on <code>Testnet</code>, <code>Testnet4</code>, and <code>Signet</code></li>
+<li><code>bcrt1</code> on <code>Regtest</code></li>
+</ul>
+<pre><code class="language-rust">use bitcoin::secp256k1::{Secp256k1, SecretKey};
+use bitcoin::{Address, CompressedPublicKey, Network};
+
+fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+    let secp = Secp256k1::new();
+    let secret_key = SecretKey::from_slice(&amp;[1u8; 32])?;
+    let compressed = CompressedPublicKey(secret_key.public_key(&amp;secp));
+
+    let mainnet = Address::p2wpkh(&amp;compressed, Network::Bitcoin);
+    let testnet = Address::p2wpkh(&amp;compressed, Network::Testnet);
+    let testnet4 = Address::p2wpkh(&amp;compressed, Network::Testnet4);
+    let signet = Address::p2wpkh(&amp;compressed, Network::Signet);
+    let regtest = Address::p2wpkh(&amp;compressed, Network::Regtest);
+
+    println!("mainnet:  {}", mainnet);
+    println!("testnet:  {}", testnet);
+    println!("testnet4: {}", testnet4);
+    println!("signet:   {}", signet);
+    println!("regtest:  {}", regtest);
+
+    Ok(())
+}</code></pre>
 
                     </main>
 
