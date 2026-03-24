@@ -1,0 +1,7 @@
+{
+  "mode": "deterministic",
+  "source_hash": "bcbfe8c8437edb746b3c9575811bfa46751ae15c4a3e016832d12571c719471b",
+  "outputs": [
+    "mainnet:  bc1q0xcqpzrky6eff2g52qdye53xkk9jxkvrh6yhyw\ntestnet:  tb1q0xcqpzrky6eff2g52qdye53xkk9jxkvraulyla\ntestnet4: tb1q0xcqpzrky6eff2g52qdye53xkk9jxkvraulyla\nsignet:   tb1q0xcqpzrky6eff2g52qdye53xkk9jxkvraulyla\nregtest:  bcrt1q0xcqpzrky6eff2g52qdye53xkk9jxkvrl4xfg5\n"
+  ]
+}

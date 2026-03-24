@@ -9,6 +9,9 @@ src = "src"
 title = "Rust Bitcoin Cookbook"
 description = "A cookbook for Rust Bitcoin development"
 
+[build]
+extra-watch-dirs = ["runnable_examples/examples"]
+
 [rust]
 edition = "2021"
 

@@ -4,8 +4,11 @@ use mdbook_preprocessor::book::{Book, BookItem, Chapter};
 use mdbook_preprocessor::{Preprocessor, PreprocessorContext};
 use pulldown_cmark::{html, Options, Parser};
 use regex::Regex;
-use serde_json::{json, Value};
+use serde::{Deserialize, Serialize};
+use serde_json::json;
+use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
+use std::fmt::Write as _;
 use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
@@ -50,7 +53,8 @@ struct Settings {
     nondeterministic_sample_count: usize,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize)]
+#[serde(rename_all = "lowercase")]
 enum ExampleMode {
     Deterministic,
     Nondeterministic,
@@ -77,6 +81,13 @@ impl ExampleMode {
 struct RunnableDirective {
     rel_path: PathBuf,
     mode: ExampleMode,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+struct RunnableArtifact {
+    mode: ExampleMode,
+    source_hash: String,
+    outputs: Vec<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -191,7 +202,7 @@ impl Preprocessor for RunnableExamples {
 
         if settings.enabled {
             for directive in &referenced_examples {
-                generate_output(ctx.root.as_path(), &settings, directive)?;
+                ensure_artifact(ctx.root.as_path(), &settings, directive)?;
             }
         }
 
@@ -247,12 +258,7 @@ fn parse_note_directive_header(body: &str) -> Result<NoteDirective> {
         .captures(body)
         .with_context(|| format!("invalid note directive `{body}`"))?;
 
-    let note_type = NoteType::from_token(
-        captures
-            .get(1)
-            .context("missing note type")?
-            .as_str(),
-    )?;
+    let note_type = NoteType::from_token(captures.get(1).context("missing note type")?.as_str())?;
     let title = captures
         .get(2)
         .map(|m| m.as_str().to_string())
@@ -415,7 +421,10 @@ fn parse_fence_delimiter(line: &str) -> Option<FenceDelimiter> {
         return None;
     }
 
-    let len = line.chars().take_while(|candidate| *candidate == ch).count();
+    let len = line
+        .chars()
+        .take_while(|candidate| *candidate == ch)
+        .count();
     if len < 3 {
         return None;
     }
@@ -574,56 +583,31 @@ fn read_outputs(
     settings: &Settings,
     directive: &RunnableDirective,
 ) -> Result<Vec<String>> {
-    match directive.mode {
-        ExampleMode::Deterministic => {
-            let output_path = resolve_path(
-                root,
-                &deterministic_output_path_for(settings, &directive.rel_path),
-            );
-            let stdout = fs::read_to_string(&output_path).with_context(|| {
-                format!(
-                    "missing generated runnable output {}",
-                    output_path.display()
-                )
-            })?;
-            Ok(vec![stdout])
-        }
-        ExampleMode::Nondeterministic => {
-            let output_path = resolve_path(
-                root,
-                &nondeterministic_output_path_for(settings, &directive.rel_path),
-            );
-            let artifact_text = fs::read_to_string(&output_path).with_context(|| {
-                format!(
-                    "missing generated runnable samples {}",
-                    output_path.display()
-                )
-            })?;
-            let artifact: Value = serde_json::from_str(&artifact_text).with_context(|| {
-                format!("unable to parse runnable samples {}", output_path.display())
-            })?;
-            let outputs = artifact
-                .get("outputs")
-                .and_then(Value::as_array)
-                .context("runnable samples JSON is missing an `outputs` array")?;
-
-            let mut collected = Vec::with_capacity(outputs.len());
-            for value in outputs {
-                let output = value
-                    .as_str()
-                    .context("runnable sample output must be a string")?;
-                collected.push(output.to_string());
-            }
-
-            Ok(collected)
-        }
-    }
+    let output_path = resolve_path(
+        root,
+        &artifact_output_path_for(settings, &directive.rel_path),
+    );
+    let artifact = read_artifact(&output_path)
+        .with_context(|| format!("unable to read runnable artifact {}", output_path.display()))?;
+    Ok(artifact.outputs)
 }
 
-fn generate_output(root: &Path, settings: &Settings, directive: &RunnableDirective) -> Result<()> {
+fn ensure_artifact(root: &Path, settings: &Settings, directive: &RunnableDirective) -> Result<()> {
     let example_path = root.join(&directive.rel_path);
     let source = fs::read_to_string(&example_path)
         .with_context(|| format!("unable to read runnable example {}", example_path.display()))?;
+    let source_hash = source_hash(&source);
+    let output_path = resolve_path(
+        root,
+        &artifact_output_path_for(settings, &directive.rel_path),
+    );
+
+    if let Ok(existing) = read_artifact(&output_path) {
+        if artifact_is_current(&existing, directive, &source_hash, settings) {
+            return Ok(());
+        }
+    }
+
     let manifest_path = resolve_path(root, &settings.manifest_path);
     let manifest_template = fs::read_to_string(&manifest_path).with_context(|| {
         format!(
@@ -631,57 +615,80 @@ fn generate_output(root: &Path, settings: &Settings, directive: &RunnableDirecti
             manifest_path.display()
         )
     })?;
+    let artifact = generate_artifact(
+        root,
+        settings,
+        directive,
+        &source,
+        &manifest_template,
+        source_hash,
+    )?;
 
-    match directive.mode {
-        ExampleMode::Deterministic => {
-            let stdout = run_example_once(
-                root,
-                settings,
-                &directive.rel_path,
-                &source,
-                &manifest_template,
-            )?;
-            let output_path = resolve_path(
-                root,
-                &deterministic_output_path_for(settings, &directive.rel_path),
-            );
-            if let Some(parent) = output_path.parent() {
-                fs::create_dir_all(parent)?;
-            }
-            fs::write(&output_path, stdout).with_context(|| {
-                format!("unable to write runnable output {}", output_path.display())
-            })?;
-        }
-        ExampleMode::Nondeterministic => {
-            let mut outputs = Vec::with_capacity(settings.nondeterministic_sample_count);
-            for _ in 0..settings.nondeterministic_sample_count {
-                outputs.push(run_example_once(
-                    root,
-                    settings,
-                    &directive.rel_path,
-                    &source,
-                    &manifest_template,
-                )?);
-            }
-
-            let artifact = json!({
-                "mode": directive.mode.as_str(),
-                "outputs": outputs,
-            });
-            let output_path = resolve_path(
-                root,
-                &nondeterministic_output_path_for(settings, &directive.rel_path),
-            );
-            if let Some(parent) = output_path.parent() {
-                fs::create_dir_all(parent)?;
-            }
-            fs::write(&output_path, serde_json::to_string_pretty(&artifact)?).with_context(
-                || format!("unable to write runnable samples {}", output_path.display()),
-            )?;
-        }
+    if let Some(parent) = output_path.parent() {
+        fs::create_dir_all(parent)?;
     }
+    fs::write(&output_path, serde_json::to_string_pretty(&artifact)?).with_context(|| {
+        format!(
+            "unable to write runnable artifact {}",
+            output_path.display()
+        )
+    })?;
 
     Ok(())
+}
+
+fn read_artifact(output_path: &Path) -> Result<RunnableArtifact> {
+    let artifact_text = fs::read_to_string(output_path)?;
+    serde_json::from_str(&artifact_text).with_context(|| {
+        format!(
+            "unable to parse runnable artifact {}",
+            output_path.display()
+        )
+    })
+}
+
+fn artifact_is_current(
+    artifact: &RunnableArtifact,
+    directive: &RunnableDirective,
+    source_hash: &str,
+    settings: &Settings,
+) -> bool {
+    artifact.mode == directive.mode
+        && artifact.source_hash == source_hash
+        && artifact.outputs.len() == expected_output_count(settings, directive.mode)
+}
+
+fn expected_output_count(settings: &Settings, mode: ExampleMode) -> usize {
+    match mode {
+        ExampleMode::Deterministic => 1,
+        ExampleMode::Nondeterministic => settings.nondeterministic_sample_count,
+    }
+}
+
+fn generate_artifact(
+    root: &Path,
+    settings: &Settings,
+    directive: &RunnableDirective,
+    source: &str,
+    manifest_template: &str,
+    source_hash: String,
+) -> Result<RunnableArtifact> {
+    let mut outputs = Vec::with_capacity(expected_output_count(settings, directive.mode));
+    for _ in 0..expected_output_count(settings, directive.mode) {
+        outputs.push(run_example_once(
+            root,
+            settings,
+            &directive.rel_path,
+            source,
+            manifest_template,
+        )?);
+    }
+
+    Ok(RunnableArtifact {
+        mode: directive.mode,
+        source_hash,
+        outputs,
+    })
 }
 
 fn example_package_name(rel_path: &Path) -> String {
@@ -712,11 +719,8 @@ fn example_package_name(rel_path: &Path) -> String {
 
 fn render_manifest_for_example(manifest_template: &str, rel_path: &Path) -> Result<String> {
     let package_name = example_package_name(rel_path);
-    let replaced = package_name_regex().replacen(
-        manifest_template,
-        1,
-        format!("name = \"{package_name}\""),
-    );
+    let replaced =
+        package_name_regex().replacen(manifest_template, 1, format!("name = \"{package_name}\""));
 
     if replaced == manifest_template {
         bail!("unable to rewrite package name in runnable manifest template");
@@ -776,22 +780,22 @@ fn run_example_once(
     })
 }
 
-fn deterministic_output_path_for(settings: &Settings, rel_path: &Path) -> PathBuf {
-    let relative = rel_path
-        .strip_prefix(&settings.examples_dir)
-        .unwrap_or(rel_path);
-    let mut output_path = settings.output_dir.join(relative);
-    output_path.set_extension("stdout");
-    output_path
-}
-
-fn nondeterministic_output_path_for(settings: &Settings, rel_path: &Path) -> PathBuf {
+fn artifact_output_path_for(settings: &Settings, rel_path: &Path) -> PathBuf {
     let relative = rel_path
         .strip_prefix(&settings.examples_dir)
         .unwrap_or(rel_path);
     let mut output_path = settings.output_dir.join(relative);
     output_path.set_extension("samples.json");
     output_path
+}
+
+fn source_hash(source: &str) -> String {
+    let digest = Sha256::digest(source.as_bytes());
+    let mut rendered = String::with_capacity(digest.len() * 2);
+    for byte in digest {
+        write!(&mut rendered, "{byte:02x}").expect("writing to string cannot fail");
+    }
+    rendered
 }
 
 fn resolve_path(root: &Path, path: &Path) -> PathBuf {

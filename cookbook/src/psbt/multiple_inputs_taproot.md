@@ -219,7 +219,7 @@ Finally, we return vector of tuples `(out_point, utxo)`.
 Now we are ready for our main function that will create, update, and sign a PSBT;
 while also extracting a transaction that spends the `p2tr`s unspent outputs:
 
-{{#runnable runnable_examples/examples/psbt_multiple_inputs_taproot/full_example.rs}}
+{{#runnable runnable_examples/examples/psbt_multiple_inputs_taproot/full_example.rs mode=nondeterministic}}
 
 Let's go over the main function code block by block.
 
