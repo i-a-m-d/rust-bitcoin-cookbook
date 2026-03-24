@@ -39,7 +39,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-f8229b75.js";
+            window.path_to_searchindex_js = "searchindex-5ed29318.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-34d8fa6a.js"></script>
@@ -179,8 +179,14 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="the-network-type"><a class="header" href="#the-network-type">The <code>Network</code> Type</a></h1>
-<p><code>bitcoin::Network</code> is an enum that allows you to select which Bitcoin network and blockchain your code is targeting. In practice, it is one of the first types you touch because it affects things like address encoding, parsing and chain-specific constants.</p>
-<p>In <code>bitcoin 0.32.8</code>, the variants are:</p>
+<p>Bitcoin consists of a peer-to-peer (P2P) network of nodes running some version of the Bitcoin software. Over this network, nodes exchange messages with network peers for a number of purposes, like propagating transactions and blocks. The production network they do this on is called Mainnet. For testing purposes however, other variants of the network exist, like Testnet3, Testnet4, Signet and Regtest.</p>
+<p>The network choice is not just a label. It impacts key components of the Bitcoin system, like:</p>
+<ul>
+<li>the address formats used to send and receive coins</li>
+<li>the magic bytes used for p2p messages</li>
+<li>the blockchain the network records its transactions on</li>
+</ul>
+<p>The <code>Network</code> type represents these different Bitcoin networks. It is an enum with the following variants:</p>
 <ul>
 <li><code>Network::Bitcoin</code></li>
 <li><code>Network::Testnet</code></li>
@@ -188,6 +194,7 @@
 <li><code>Network::Signet</code></li>
 <li><code>Network::Regtest</code></li>
 </ul>
+<p>This section gives some practical examples of how and where to use the <code>Network</code> type.</p>
 
                     </main>
 
