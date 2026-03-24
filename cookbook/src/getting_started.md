@@ -80,7 +80,7 @@ A fun first program is one that generates a brand new testnet keypair and prints
 
 Replace the default contents of `src/main.rs` with:
 
-{{#runnable runnable_examples/examples/getting_started/first_tiny_program.rs mode=nondeterministic}}
+{{#runnable runnable_examples/examples/getting_started/first_tiny_program.rs}}
 
 Then run it:
 

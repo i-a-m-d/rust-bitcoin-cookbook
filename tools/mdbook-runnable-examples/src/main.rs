@@ -56,6 +56,7 @@ struct Settings {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 enum ExampleMode {
+    Auto,
     Deterministic,
     Nondeterministic,
 }
@@ -63,6 +64,7 @@ enum ExampleMode {
 impl ExampleMode {
     fn from_token(token: &str) -> Result<Self> {
         match token {
+            "auto" => Ok(Self::Auto),
             "deterministic" => Ok(Self::Deterministic),
             "nondeterministic" => Ok(Self::Nondeterministic),
             other => bail!("unsupported runnable example mode `{other}`"),
@@ -71,6 +73,7 @@ impl ExampleMode {
 
     fn as_str(self) -> &'static str {
         match self {
+            Self::Auto => "auto",
             Self::Deterministic => "deterministic",
             Self::Nondeterministic => "nondeterministic",
         }
@@ -236,11 +239,13 @@ fn package_name_regex() -> Regex {
 fn parse_runnable_directive_body(body: &str) -> Result<RunnableDirective> {
     let mut parts = body.split_whitespace();
     let rel_path = PathBuf::from(parts.next().context("missing runnable path")?);
-    let mut mode = ExampleMode::Deterministic;
+    let mut mode = ExampleMode::Auto;
 
     for token in parts {
         if let Some(value) = token.strip_prefix("mode=") {
             mode = ExampleMode::from_token(value)?;
+        } else if token == "auto" {
+            mode = ExampleMode::Auto;
         } else if token == "nondeterministic" {
             mode = ExampleMode::Nondeterministic;
         } else if token == "deterministic" {
@@ -276,14 +281,16 @@ fn collect_referenced_examples(book: &Book) -> Result<Vec<RunnableDirective>> {
 
     for chapter in book.chapters() {
         for directive in find_runnable_directives(&chapter.content)? {
-            if let Some(previous_mode) = examples.insert(directive.rel_path.clone(), directive.mode)
-            {
-                if previous_mode != directive.mode {
-                    bail!(
-                        "runnable example {} is referenced with conflicting modes",
-                        directive.rel_path.display()
-                    );
-                }
+            if let Some(previous_mode) = examples.get_mut(&directive.rel_path) {
+                *previous_mode =
+                    merge_example_modes(*previous_mode, directive.mode).with_context(|| {
+                        format!(
+                            "runnable example {} is referenced with conflicting modes",
+                            directive.rel_path.display()
+                        )
+                    })?;
+            } else {
+                examples.insert(directive.rel_path.clone(), directive.mode);
             }
         }
     }
@@ -292,6 +299,14 @@ fn collect_referenced_examples(book: &Book) -> Result<Vec<RunnableDirective>> {
         .into_iter()
         .map(|(rel_path, mode)| RunnableDirective { rel_path, mode })
         .collect())
+}
+
+fn merge_example_modes(existing: ExampleMode, incoming: ExampleMode) -> Result<ExampleMode> {
+    match (existing, incoming) {
+        (left, right) if left == right => Ok(left),
+        (ExampleMode::Auto, other) | (other, ExampleMode::Auto) => Ok(other),
+        _ => bail!("conflicting explicit runnable modes"),
+    }
 }
 
 fn find_runnable_directives(content: &str) -> Result<Vec<RunnableDirective>> {
@@ -461,14 +476,15 @@ fn render_runnable_block(
     rendered.push_str("```\n");
 
     if settings.enabled {
-        let outputs = read_outputs(root, settings, directive)?;
+        let artifact = read_artifact_for_directive(root, settings, directive)?;
         let payload = json!({
-            "outputs_base64": outputs
+            "outputs_base64": artifact
+                .outputs
                 .iter()
                 .map(|output| BASE64.encode(output.as_bytes()))
                 .collect::<Vec<_>>(),
             "delay_ms": settings.fake_running_ms,
-            "mode": directive.mode.as_str(),
+            "mode": artifact.mode.as_str(),
         });
         rendered.push_str("<script type=\"application/json\" class=\"runnable-example-output\">\n");
         rendered.push_str(&payload.to_string());
@@ -578,18 +594,17 @@ fn render_execution_source(source: &str) -> String {
     rendered
 }
 
-fn read_outputs(
+fn read_artifact_for_directive(
     root: &Path,
     settings: &Settings,
     directive: &RunnableDirective,
-) -> Result<Vec<String>> {
+) -> Result<RunnableArtifact> {
     let output_path = resolve_path(
         root,
         &artifact_output_path_for(settings, &directive.rel_path),
     );
-    let artifact = read_artifact(&output_path)
-        .with_context(|| format!("unable to read runnable artifact {}", output_path.display()))?;
-    Ok(artifact.outputs)
+    read_artifact(&output_path)
+        .with_context(|| format!("unable to read runnable artifact {}", output_path.display()))
 }
 
 fn ensure_artifact(root: &Path, settings: &Settings, directive: &RunnableDirective) -> Result<()> {
@@ -653,15 +668,32 @@ fn artifact_is_current(
     source_hash: &str,
     settings: &Settings,
 ) -> bool {
-    artifact.mode == directive.mode
-        && artifact.source_hash == source_hash
-        && artifact.outputs.len() == expected_output_count(settings, directive.mode)
+    artifact.source_hash == source_hash
+        && artifact_has_valid_shape(artifact, settings)
+        && requested_mode_accepts_artifact_mode(directive.mode, artifact.mode)
 }
 
-fn expected_output_count(settings: &Settings, mode: ExampleMode) -> usize {
-    match mode {
-        ExampleMode::Deterministic => 1,
-        ExampleMode::Nondeterministic => settings.nondeterministic_sample_count,
+fn artifact_has_valid_shape(artifact: &RunnableArtifact, settings: &Settings) -> bool {
+    match artifact.mode {
+        ExampleMode::Auto => false,
+        ExampleMode::Deterministic => artifact.outputs.len() == 1,
+        ExampleMode::Nondeterministic => {
+            artifact.outputs.len() == settings.nondeterministic_sample_count
+        }
+    }
+}
+
+fn requested_mode_accepts_artifact_mode(
+    requested_mode: ExampleMode,
+    artifact_mode: ExampleMode,
+) -> bool {
+    match requested_mode {
+        ExampleMode::Auto => matches!(
+            artifact_mode,
+            ExampleMode::Deterministic | ExampleMode::Nondeterministic
+        ),
+        ExampleMode::Deterministic => artifact_mode == ExampleMode::Deterministic,
+        ExampleMode::Nondeterministic => artifact_mode == ExampleMode::Nondeterministic,
     }
 }
 
@@ -673,8 +705,58 @@ fn generate_artifact(
     manifest_template: &str,
     source_hash: String,
 ) -> Result<RunnableArtifact> {
-    let mut outputs = Vec::with_capacity(expected_output_count(settings, directive.mode));
-    for _ in 0..expected_output_count(settings, directive.mode) {
+    match directive.mode {
+        ExampleMode::Auto => generate_auto_artifact(
+            root,
+            settings,
+            directive,
+            source,
+            manifest_template,
+            source_hash,
+        ),
+        ExampleMode::Deterministic => Ok(RunnableArtifact {
+            mode: ExampleMode::Deterministic,
+            source_hash,
+            outputs: vec![run_example_once(
+                root,
+                settings,
+                &directive.rel_path,
+                source,
+                manifest_template,
+            )?],
+        }),
+        ExampleMode::Nondeterministic => {
+            let mut outputs = Vec::with_capacity(settings.nondeterministic_sample_count);
+            for _ in 0..settings.nondeterministic_sample_count {
+                outputs.push(run_example_once(
+                    root,
+                    settings,
+                    &directive.rel_path,
+                    source,
+                    manifest_template,
+                )?);
+            }
+
+            Ok(RunnableArtifact {
+                mode: ExampleMode::Nondeterministic,
+                source_hash,
+                outputs,
+            })
+        }
+    }
+}
+
+fn generate_auto_artifact(
+    root: &Path,
+    settings: &Settings,
+    directive: &RunnableDirective,
+    source: &str,
+    manifest_template: &str,
+    source_hash: String,
+) -> Result<RunnableArtifact> {
+    let sample_count = settings.nondeterministic_sample_count.max(1);
+    let mut outputs = Vec::with_capacity(sample_count);
+    for _ in 0..sample_count {
         outputs.push(run_example_once(
             root,
             settings,
@@ -684,8 +766,15 @@ fn generate_artifact(
         )?);
     }
 
+    let inferred_mode = if outputs.iter().skip(1).all(|output| output == &outputs[0]) {
+        outputs.truncate(1);
+        ExampleMode::Deterministic
+    } else {
+        ExampleMode::Nondeterministic
+    };
+
     Ok(RunnableArtifact {
-        mode: directive.mode,
+        mode: inferred_mode,
         source_hash,
         outputs,
     })
