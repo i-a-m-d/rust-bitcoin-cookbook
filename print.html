@@ -40,7 +40,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-a90c98d3.js";
+            window.path_to_searchindex_js = "searchindex-89315e0f.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-34d8fa6a.js"></script>
@@ -349,6 +349,29 @@ fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
 }</code></pre>
 <script type="application/json" class="runnable-example-output">
 {"delay_ms":180,"mode":"deterministic","outputs_base64":["bWFpbm5ldDogIGJjMXEweGNxcHpya3k2ZWZmMmc1MnFkeWU1M3hrazlqeGt2cmg2eWh5dwp0ZXN0bmV0OiAgdGIxcTB4Y3FwenJreTZlZmYyZzUycWR5ZTUzeGtrOWp4a3ZyYXVseWxhCnRlc3RuZXQ0OiB0YjFxMHhjcXB6cmt5NmVmZjJnNTJxZHllNTN4a2s5anhrdnJhdWx5bGEKc2lnbmV0OiAgIHRiMXEweGNxcHpya3k2ZWZmMmc1MnFkeWU1M3hrazlqeGt2cmF1bHlsYQpyZWd0ZXN0OiAgYmNydDFxMHhjcXB6cmt5NmVmZjJnNTJxZHllNTN4a2s5anhrdnJsNHhmZzUK"]}
+</script>
+<h2 id="encode-a-private-key-as-wif-on-different-networks"><a class="header" href="#encode-a-private-key-as-wif-on-different-networks">Encode a private key as WIF on different networks</a></h2>
+<p><code>Network</code> also matters when encoding a private key as WIF. The same scalar gets a different WIF encoding depending on whether we’re working with mainnet or one of the test networks.</p>
+<pre><code class="language-rust runnable-example">use bitcoin::secp256k1::SecretKey;
+use bitcoin::{Network, PrivateKey};
+
+fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+    let secret_key = SecretKey::from_slice(&amp;[1u8; 32])?;
+
+    let mainnet = PrivateKey::new(secret_key, Network::Bitcoin);
+    let testnet = PrivateKey::new(secret_key, Network::Testnet);
+    let signet = PrivateKey::new(secret_key, Network::Signet);
+    let regtest = PrivateKey::new(secret_key, Network::Regtest);
+
+    println!("{:&lt;7}: {}", "mainnet", mainnet.to_wif());
+    println!("{:&lt;7}: {}", "testnet", testnet.to_wif());
+    println!("{:&lt;7}: {}", "signet", signet.to_wif());
+    println!("{:&lt;7}: {}", "regtest", regtest.to_wif());
+
+    Ok(())
+}</code></pre>
+<script type="application/json" class="runnable-example-output">
+{"delay_ms":180,"mode":"deterministic","outputs_base64":["bWFpbm5ldDogS3dGZk5VaFNEYUFTU0F3dEc3c3NRTTF1Vlg4UmdYNUdIV25uTGZoZmlRRGlnamlvV1hISAp0ZXN0bmV0OiBjTWNlcVBoSGVkcmhiY1I5ZVhnem1mV3k3a1JxTHlBeE1Zd0ZUNkFCRFdzaXdVcDlOc3E5CnNpZ25ldCA6IGNNY2VxUGhIZWRyaGJjUjllWGd6bWZXeTdrUnFMeUF4TVl3RlQ2QUJEV3Npd1VwOU5zcTkKcmVndGVzdDogY01jZXFQaEhlZHJoYmNSOWVYZ3ptZld5N2tScUx5QXhNWXdGVDZBQkRXc2l3VXA5TnNxOQo="]}
 </script><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="constructing-and-signing-transactions"><a class="header" href="#constructing-and-signing-transactions">Constructing and Signing Transactions</a></h1>
 <p>We provide the following examples:</p>
