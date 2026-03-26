@@ -1,0 +1,7 @@
+{
+  "mode": "deterministic",
+  "source_hash": "9a4862f28306e9d482309db6973a1edd2008af021f5a5c36a3c6b455031052e4",
+  "outputs": [
+    "mainnet: KwFfNUhSDaASSAwtG7ssQM1uVX8RgX5GHWnnLfhfiQDigjioWXHH\ntestnet: cMceqPhHedrhbcR9eXgzmfWy7kRqLyAxMYwFT6ABDWsiwUp9Nsq9\nsignet : cMceqPhHedrhbcR9eXgzmfWy7kRqLyAxMYwFT6ABDWsiwUp9Nsq9\nregtest: cMceqPhHedrhbcR9eXgzmfWy7kRqLyAxMYwFT6ABDWsiwUp9Nsq9\n"
+  ]
+}

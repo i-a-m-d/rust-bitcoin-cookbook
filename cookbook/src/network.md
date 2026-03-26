@@ -23,3 +23,9 @@ A concrete use case of the `Network` type is during address construction. Differ
 - `bcrt1` on `Regtest`
 
 {{#runnable runnable_examples/examples/network/p2wpkh_across_networks.rs}}
+
+## Encode a private key as WIF on different networks
+
+`Network` also matters when encoding a private key as WIF. The same scalar gets a different WIF encoding depending on whether we're working with mainnet or one of the test networks.
+
+{{#runnable runnable_examples/examples/network/wif_across_networks.rs}}
