@@ -1,0 +1,34 @@
+/*
+Configure in-page heading depth for the left sidebar in `sidebar.js`.
+
+0 = hide all in-page headings
+1 = show h2
+2 = show h2-h3
+3 = show h2-h4
+4 = show h2-h5
+5 = show h2-h6
+*/
+
+#mdbook-sidebar .on-this-page {
+    display: none;
+}
+
+html[data-sidebar-heading-levels]:not([data-sidebar-heading-levels="0"]) #mdbook-sidebar .on-this-page {
+    display: block;
+}
+
+html[data-sidebar-heading-levels="1"] #mdbook-sidebar .on-this-page > ol.section > li > ol.section {
+    display: none;
+}
+
+html[data-sidebar-heading-levels="2"] #mdbook-sidebar .on-this-page > ol.section > li > ol.section > li > ol.section {
+    display: none;
+}
+
+html[data-sidebar-heading-levels="3"] #mdbook-sidebar .on-this-page > ol.section > li > ol.section > li > ol.section > li > ol.section {
+    display: none;
+}
+
+html[data-sidebar-heading-levels="4"] #mdbook-sidebar .on-this-page > ol.section > li > ol.section > li > ol.section > li > ol.section > li > ol.section {
+    display: none;
+}
