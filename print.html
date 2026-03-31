@@ -40,7 +40,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-89315e0f.js";
+            window.path_to_searchindex_js = "searchindex-0f456b27.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-34d8fa6a.js"></script>
@@ -372,7 +372,32 @@ fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
 }</code></pre>
 <script type="application/json" class="runnable-example-output">
 {"delay_ms":180,"mode":"deterministic","outputs_base64":["bWFpbm5ldDogS3dGZk5VaFNEYUFTU0F3dEc3c3NRTTF1Vlg4UmdYNUdIV25uTGZoZmlRRGlnamlvV1hISAp0ZXN0bmV0OiBjTWNlcVBoSGVkcmhiY1I5ZVhnem1mV3k3a1JxTHlBeE1Zd0ZUNkFCRFdzaXdVcDlOc3E5CnNpZ25ldCA6IGNNY2VxUGhIZWRyaGJjUjllWGd6bWZXeTdrUnFMeUF4TVl3RlQ2QUJEV3Npd1VwOU5zcTkKcmVndGVzdDogY01jZXFQaEhlZHJoYmNSOWVYZ3ptZld5N2tScUx5QXhNWXdGVDZBQkRXc2l3VXA5TnNxOQo="]}
-</script><div style="break-before: page; page-break-before: always;"></div>
+</script>
+<h2 id="use-network-to-validate-addresses"><a class="header" href="#use-network-to-validate-addresses">Use <code>Network</code> to validate addresses</a></h2>
+<p><code>Network</code> also comes into play when validating addresses.</p>
+<pre><code class="language-rust">use std::str::FromStr;
+
+use bitcoin::{Address, Network};
+
+fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+    let unchecked = Address::from_str(
+        "tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3q0sl5k7",
+    )?;
+    
+    assert!(unchecked.is_valid_for_network(Network::Testnet));
+    assert!(unchecked.is_valid_for_network(Network::Testnet4));
+    assert!(unchecked.is_valid_for_network(Network::Signet));
+    assert!(!unchecked.is_valid_for_network(Network::Bitcoin));
+    
+    let checked = unchecked.require_network(Network::Testnet)?;
+    assert_eq!(
+        checked.to_string(),
+        "tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3q0sl5k7"
+    );
+    
+    Ok(())
+}</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="constructing-and-signing-transactions"><a class="header" href="#constructing-and-signing-transactions">Constructing and Signing Transactions</a></h1>
 <p>We provide the following examples:</p>
 <ul>
