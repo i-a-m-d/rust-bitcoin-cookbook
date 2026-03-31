@@ -29,3 +29,32 @@ A concrete use case of the `Network` type is during address construction. Differ
 `Network` also matters when encoding a private key as WIF. The same scalar gets a different WIF encoding depending on whether we're working with mainnet or one of the test networks.
 
 {{#runnable runnable_examples/examples/network/wif_across_networks.rs}}
+
+## Use `Network` to validate addresses
+
+`Network` also comes into play when validating addresses.
+
+```rust
+use std::str::FromStr;
+
+use bitcoin::{Address, Network};
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let unchecked = Address::from_str(
+        "tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3q0sl5k7",
+    )?;
+    
+    assert!(unchecked.is_valid_for_network(Network::Testnet));
+    assert!(unchecked.is_valid_for_network(Network::Testnet4));
+    assert!(unchecked.is_valid_for_network(Network::Signet));
+    assert!(!unchecked.is_valid_for_network(Network::Bitcoin));
+    
+    let checked = unchecked.require_network(Network::Testnet)?;
+    assert_eq!(
+        checked.to_string(),
+        "tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3q0sl5k7"
+    );
+    
+    Ok(())
+}
+```
